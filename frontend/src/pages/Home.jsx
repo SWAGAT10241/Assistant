@@ -181,31 +181,56 @@ function Home() {
   }, []);
 
   return (
-    <div className='w-full h-[100vh] bg-gradient-to-t from-[black] to-[#02023d] flex justify-center items-center flex-col gap-[15px] overflow-hidden'>
-      <CgMenuRight className='lg:hidden text-white absolute top-[20px] right-[20px] w-[25px] h-[25px]' onClick={() => setHam(true)} />
-      <div className={`absolute lg:hidden top-0 w-full h-full bg-[#00000053] backdrop-blur-lg p-[20px] flex flex-col gap-[20px] items-start ${ham ? "translate-x-0" : "translate-x-full"} transition-transform`}>
-        <RxCross1 className='text-white absolute top-[20px] right-[20px] w-[25px] h-[25px]' onClick={() => setHam(false)} />
-        <button className="min-w-[150px] h-[60px] text-black font-semibold bg-white rounded-full text-[19px] cursor-pointer" onClick={handleLogOut}>Log Out</button>
-        <button className="min-w-[150px] h-[60px] text-black font-semibold bg-white rounded-full text-[19px] px-[20px] py-[10px] cursor-pointer" onClick={() => navigate('/customize')}>Customize your Assistant</button>
+    <div className='w-full h-screen bg-gradient-to-t from-black to-[#02023d] flex justify-center items-center flex-col gap-4 overflow-hidden relative'>
+      <CgMenuRight
+        className='text-white absolute top-5 right-5 w-7 h-7 cursor-pointer z-50'
+        onClick={() => setHam(true)}
+      />
+      <div className={`absolute top-0 right-0 bg-[#00000080] backdrop-blur-lg p-5 flex flex-col gap-5 items-start transition-transform duration-300 z-50 ${ham ? 'translate-x-0' : 'translate-x-full'} w-full sm:w-[400px] lg:w-[300px] h-full`}>
+        <RxCross1
+          className='text-white absolute top-5 right-5 w-7 h-7 cursor-pointer'
+          onClick={() => setHam(false)}
+        />
+
+        <button
+          className="min-w-[150px] h-[50px] text-black font-semibold bg-white rounded-full text-lg cursor-pointer"
+          onClick={handleLogOut}
+        >
+          Log Out
+        </button>
+
+        <button
+          className="min-w-[150px] h-[50px] text-black font-semibold bg-white rounded-full text-lg px-5 py-2 cursor-pointer"
+          onClick={() => navigate('/customize')}
+        >
+          Customize your Assistant
+        </button>
+
         <div className='w-full h-[2px] bg-gray-400'></div>
-        <h1 className='text-white font-semibold text-[19px]'>History</h1>
-        <div className='w-full h-[400px] gap-[20px] overflow-y-auto flex flex-col truncate'>{userData.history?.map((his, idx) => (
-          <span key={idx} className='text-gray-200 text-[18px] w-full h-[30px]'>{his}</span>
-        ))}
+
+        <h1 className='text-white font-semibold text-lg'>History</h1>
+        <div className='w-full h-[400px] overflow-y-auto flex flex-col gap-3'>
+          {userData?.history?.map((his, idx) => (
+            <span key={idx} className='text-gray-200 text-base truncate'>{his}</span>
+          ))}
         </div>
       </div>
-      <button className="min-w-[150px] h-[60px] mt-[30px] text-black font-semibold hidden lg:block bg-white absolute top-[20px] right-[20px] rounded-full text-[19px] cursor-pointer" onClick={handleLogOut}>Log Out</button>
-      <button className="min-w-[150px] h-[60px] mt-[30px] text-black font-semibold hidden lg:block bg-white absolute top-[100px] right-[20px] rounded-full text-[19px] px-[20px] py-[10px] cursor-pointer" onClick={() => navigate('/customize')}>Customize your Assistant</button>
-      <div className='w-[300px] h-[400px] flex justify-center items-center overflow-hidden rounded-4xl shadow-lg'>
-        <img src={userData?.assistantImage || aiImg} alt="" className='h-full object-cover ' />
+      <div className='w-[300px] h-[400px] flex justify-center items-center overflow-hidden rounded-2xl shadow-lg'>
+        <img
+          src={userData?.assistantImage || aiImg}
+          alt="assistant"
+          className='h-full w-full object-cover'
+        />
       </div>
-      <h1 className='text-white text-[18px] font-semibold'>
+      <h1 className='text-white text-lg font-semibold'>
         {userData?.assistantName ? `I'm ${userData.assistantName}` : "I'm your Assistant"}
       </h1>
-      <h1 className='text-white text-[18px] font-semibold text-wrap'>{userText || aiText || null}</h1>
-      {!aiText && <img src={userImg} alt="" className='w-[200px]' />}
-      {aiText && <img src={aiImg} alt="" className='w-[200px]' />}
-      <h1 className='text-white text-[18px] font-semibold text-wrap'>{userText ? userText : aiText ? aiText : null}</h1>
+      <h1 className='text-white text-lg font-semibold text-center px-4'>
+        {userText || aiText || null}
+      </h1>
+      {!aiText && <img src={userImg} alt="user" className='w-[200px]' />}
+      {aiText && <img src={aiImg} alt="ai" className='w-[200px]' />}
+
     </div>
   )
 }
