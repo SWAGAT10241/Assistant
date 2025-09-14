@@ -15,19 +15,22 @@ function Customize2() {
             let formData = new FormData()
             formData.append("assistantName", assistantName)
             if (backendImage) {
-                formData.append("assistantName", backendImage)
+                formData.append("assistantImage", backendImage)
             } else {
                 formData.append("imageUrl", selectedImage)
             }
-            const result = await axios.post(`${serverUrl}/api/user/update`, formData, { withCredentials: true })
-            setLoading(false)
-            console.log(result.data);
-            setUserData(result.data)
-            navigate("/")
-        } catch (error) {
-            setLoading(false)
-            console.log(error);
 
+            const result = await axios.post(`${serverUrl}/api/user/update`, formData, {
+                withCredentials: true,
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            setUserData(result.data);
+            setLoading(false);
+            navigate('/');
+        } catch (error) {
+            console.error("Update assistant error:", error);
+            setLoading(false);
         }
     }
 
