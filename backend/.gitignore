@@ -1,1 +1,21 @@
+# Node.js Backend Development .gitignore
+
+# Dependency directories
+node_modules/
+
+# Environment variables file
 .env
+
+# Logs
+logs/
+*.log
+
+# Build artifacts
+build/
+dist/
+
+# Temporary files
+ tmp/ 
+ # IDE specific files
+.idea/
+.vscode/
