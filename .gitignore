@@ -1,10 +1,26 @@
-# This is a sample .gitignore file for preventing sensitive files from being committed.
-
-# Environment variable files
-.env
-
-# Node modules folder
+# Node.js dependencies
 node_modules/
 
-# Other secrets
-secrets/
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+*.log
+
+# Build artifacts
+/build/
+/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*~
