@@ -1,0 +1,10 @@
+# This is a sample .gitignore file for preventing sensitive files from being committed.
+
+# Environment variable files
+.env
+
+# Node modules folder
+node_modules/
+
+# Other secrets
+secrets/
