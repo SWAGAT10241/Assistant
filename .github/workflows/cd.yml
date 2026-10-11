@@ -43,13 +43,13 @@ jobs:
       - name: Validate Backend Syntax
         run: |
           cd backend
-          pnpm install --frozen-lockfile || pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm test
 
       - name: Validate Frontend Production Build
         run: |
           cd frontend
-          pnpm install --frozen-lockfile || pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm run lint
           pnpm run build
 

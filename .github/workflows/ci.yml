@@ -43,7 +43,7 @@ jobs:
           cache-dependency-path: backend/pnpm-lock.yaml
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile || pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run Syntax & Unit Validation
         run: pnpm test
@@ -76,7 +76,7 @@ jobs:
           cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile || pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Lint Code (ESLint)
         run: pnpm run lint
