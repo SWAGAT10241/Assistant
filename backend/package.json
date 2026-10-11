@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "building",
   "keywords": [
     "va"
@@ -23,20 +23,25 @@
     "test": "node --check index.js app.js"
   },
   "dependencies": {
-    "@google/genai": "^1.17.0",
+    "@google/genai": "^1.52.0",
     "axios": "^1.20.0",
     "bcryptjs": "^3.0.2",
-    "cloudinary": "^2.11.0",
+    "cloudinary": "^2.7.0",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^18.0.6",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "google-auth-library": "^10.7.0",
-    "jsonwebtoken": "^9.0.3",
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.31.0",
-    "mongoose": "^8.24.1",
-    "multer": "^2.4.0",
-    "nodemon": "^3.1.10"
+    "mongoose": "^8.24.5",
+    "multer": "^2.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "overrides": {
+    "braces": ">=3.0.3"
   }
 }

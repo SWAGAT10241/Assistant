@@ -1,6 +1,8 @@
 version: 2
 updates:
-  # Maintain backend npm dependencies
+  # ===================================================
+  # Backend Dependencies (Grouped Updates)
+  # ===================================================
   - package-ecosystem: "npm"
     directory: "/backend"
     schedule:
@@ -8,14 +10,20 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     commit-message:
       prefix: "chore(deps-backend)"
     labels:
       - "dependencies"
       - "backend"
+    groups:
+      backend-dependencies:
+        patterns:
+          - "*"
 
-  # Maintain frontend npm dependencies
+  # ===================================================
+  # Frontend Dependencies (Grouped Updates)
+  # ===================================================
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
@@ -23,14 +31,20 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     commit-message:
       prefix: "chore(deps-frontend)"
     labels:
       - "dependencies"
       - "frontend"
+    groups:
+      frontend-dependencies:
+        patterns:
+          - "*"
 
-  # Maintain GitHub Actions dependencies
+  # ===================================================
+  # GitHub Actions (Grouped Updates)
+  # ===================================================
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -38,9 +52,13 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 2
     commit-message:
       prefix: "ci(actions)"
     labels:
       - "ci"
       - "github-actions"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
