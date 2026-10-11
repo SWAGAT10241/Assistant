@@ -7,7 +7,10 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
   const [userText, setUserText] = useState("");
   const [aiText, setAiText] = useState("");
   const [speechError, setSpeechError] = useState(null);
-  const [isSupported, setIsSupported] = useState(true);
+  const [isSupported] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  });
 
   const recognitionRef = useRef(null);
   const isSpeakingRef = useRef(false);
@@ -64,6 +67,11 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
    */
   const startListening = useCallback(() => {
     if (!recognitionRef.current || isSpeakingRef.current || isRecognizingRef.current) {
+      if (typeof window !== "undefined" && !(window.SpeechRecognition || window.webkitSpeechRecognition)) {
+        setSpeechError(
+          "Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari."
+        );
+      }
       return;
     }
     try {
@@ -143,10 +151,6 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setIsSupported(false);
-      setSpeechError(
-        "Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari."
-      );
       return;
     }
 

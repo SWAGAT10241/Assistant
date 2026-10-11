@@ -15,24 +15,46 @@ export function AuthProvider({ children }) {
   const [backendImage, setBackendImage] = useState(null);
 
   /**
-   * Check if user has an active session on mount
+   * Check if user has an active session
    */
   const checkAuth = useCallback(async () => {
     try {
-      setLoading(true);
       const currentUser = await authApi.getCurrentUser();
       setUser(currentUser);
       setAuthError(null);
+      return currentUser;
     } catch {
       setUser(null);
+      return null;
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    let isMounted = true;
+    (async () => {
+      try {
+        const currentUser = await authApi.getCurrentUser();
+        if (isMounted) {
+          setUser(currentUser);
+          setAuthError(null);
+        }
+      } catch {
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /**
    * Log in user

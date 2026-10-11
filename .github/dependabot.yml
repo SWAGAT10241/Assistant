@@ -16,6 +16,9 @@ updates:
     labels:
       - "dependencies"
       - "backend"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       backend-dependencies:
         applies-to: version-updates
@@ -42,6 +45,9 @@ updates:
     labels:
       - "dependencies"
       - "frontend"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       frontend-dependencies:
         applies-to: version-updates
