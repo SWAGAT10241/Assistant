@@ -39,7 +39,7 @@ importers:
         specifier: ^10.7.0
         version: 10.7.0(supports-color@5.5.0)
       jsonwebtoken:
-        specifier: ^9.0.2
+        specifier: ^9.0.3
         version: 9.0.3
       moment:
         specifier: ^2.31.0
