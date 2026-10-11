@@ -1,27 +1,30 @@
-import express from 'express';
-import dotenv from 'dotenv';
-dotenv.config();
-import connectDb from './config/db.js';
-import authRouter from './routes/auth.routes.js';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import userRouter from './routes/user.routes.js';
-import geminiResponse from './gemini.js';
+import app from "./app.js";
+import connectDb from "./config/db.js";
+import env from "./config/env.js";
 
+const startServer = async () => {
+  try {
+    await connectDb();
 
-const app = express();
-app.use(cors({
-    origin: "https://assistant-ox8s.onrender.com",
-    credentials: true
-}));
-const port = process.env.PORT || 5000
-app.use(express.json());
-app.use(cookieParser());
-app.use("/api/auth", authRouter)
-app.use("/api/user", userRouter)
+    const server = app.listen(env.PORT, () => {
+      console.log(`🚀 Virtual Assistant Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
+    });
 
+    // Graceful shutdown handling
+    const shutdown = (signal) => {
+      console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
+      server.close(() => {
+        console.log("💤 HTTP server closed.");
+        process.exit(0);
+      });
+    };
 
-app.listen(port, () => {
-    connectDb()
-    console.log(`Server is running`);
-})
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
