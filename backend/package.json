@@ -29,7 +29,7 @@
     "cloudinary": "^2.7.0",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "google-auth-library": "^10.7.0",
