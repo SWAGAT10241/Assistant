@@ -19,7 +19,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "node --watch index.js",
     "test": "node --check index.js app.js"
   },
   "dependencies": {
@@ -37,11 +37,5 @@
     "moment": "^2.31.0",
     "mongoose": "^8.24.5",
     "multer": "^2.4.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  },
-  "overrides": {
-    "braces": ">=3.0.3"
   }
 }

@@ -18,6 +18,11 @@ updates:
       - "backend"
     groups:
       backend-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      backend-security:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -39,6 +44,11 @@ updates:
       - "frontend"
     groups:
       frontend-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      frontend-security:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -60,5 +70,6 @@ updates:
       - "github-actions"
     groups:
       github-actions:
+        applies-to: version-updates
         patterns:
           - "*"
