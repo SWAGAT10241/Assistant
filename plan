@@ -1,0 +1,5 @@
+Frontend    → React
+Backend     → Node + Express
+Database    → MongoDB
+AI Memory   → Vector DB (later)
+Storage     → Cloudinary

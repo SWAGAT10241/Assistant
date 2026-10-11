@@ -1,0 +1,122 @@
+name: CD Deployment Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - backend
+          - frontend
+
+jobs:
+  # -----------------------------------------------------------
+  # Pre-deployment Verification
+  # -----------------------------------------------------------
+  verify-build:
+    name: Verify Build Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: |
+            backend/pnpm-lock.yaml
+            frontend/pnpm-lock.yaml
+
+      - name: Validate Backend Syntax
+        run: |
+          cd backend
+          pnpm install --frozen-lockfile || pnpm install
+          pnpm test
+
+      - name: Validate Frontend Production Build
+        run: |
+          cd frontend
+          pnpm install --frozen-lockfile || pnpm install
+          pnpm run lint
+          pnpm run build
+
+  # -----------------------------------------------------------
+  # Deploy Backend Service
+  # -----------------------------------------------------------
+  deploy-backend:
+    name: Deploy Backend to Cloud (Render)
+    needs: [verify-build]
+    if: github.event.inputs.target == 'all' || github.event.inputs.target == 'backend' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Backend Deploy Hook
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::warning title=Deployment Hook Missing::RENDER_BACKEND_DEPLOY_HOOK_URL secret is not set in GitHub repository settings. Skipping automated trigger."
+            echo "To enable automated deployments, add RENDER_BACKEND_DEPLOY_HOOK_URL to your GitHub repository secrets."
+            exit 0
+          fi
+
+          echo "🚀 Triggering Render backend deployment hook..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$DEPLOY_HOOK")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Response status: $HTTP_STATUS"
+          echo "Response body: $BODY"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Backend deployment triggered successfully!"
+          else
+            echo "::error::Failed to trigger backend deployment. HTTP Status: $HTTP_STATUS"
+            exit 1
+          fi
+
+  # -----------------------------------------------------------
+  # Deploy Frontend Service
+  # -----------------------------------------------------------
+  deploy-frontend:
+    name: Deploy Frontend to Cloud (Render)
+    needs: [verify-build]
+    if: github.event.inputs.target == 'all' || github.event.inputs.target == 'frontend' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Frontend Deploy Hook
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::warning title=Deployment Hook Missing::RENDER_FRONTEND_DEPLOY_HOOK_URL secret is not set in GitHub repository settings. Skipping automated trigger."
+            echo "To enable automated deployments, add RENDER_FRONTEND_DEPLOY_HOOK_URL to your GitHub repository secrets."
+            exit 0
+          fi
+
+          echo "🚀 Triggering Render frontend deployment hook..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$DEPLOY_HOOK")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Response status: $HTTP_STATUS"
+          echo "Response body: $BODY"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Frontend deployment triggered successfully!"
+          else
+            echo "::error::Failed to trigger frontend deployment. HTTP Status: $HTTP_STATUS"
+            exit 1
+          fi

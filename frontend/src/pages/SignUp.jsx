@@ -1,102 +1,119 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import bg from "../assets/authBg.png";
-import { IoMdEye } from "react-icons/io";
-import { IoMdEyeOff } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
-import { userDataContext } from "../context/UserContext";
-import axios from "axios";
-function SignUp() {
-  const [showPassword, setShowPassword] = useState(false);
-  const { serverUrl, userData, setUserData } = useContext(userDataContext);
+import useAuth from "../hooks/useAuth";
+import Input from "../components/common/Input";
+import Button from "../components/common/Button";
+
+export function SignUp() {
+  const { register } = useAuth();
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setErr("");
+    setErrorMessage("");
+
+    if (!name.trim()) {
+      setErrorMessage("Please enter your name.");
+      return;
+    }
+    if (!email.trim()) {
+      setErrorMessage("Please enter a valid email.");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
     setLoading(true);
     try {
-      let result = await axios.post(
-        `${serverUrl}/api/auth/signup`,
-        {
-          name,
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
-      setUserData(result.data);
-      setLoading(false);
-      navigate('/customize')
+      await register({ name, email, password });
+      navigate("/customize");
     } catch (error) {
-      setUserData(null);
+      setErrorMessage(error.message || "Failed to create account. Please try again.");
+    } finally {
       setLoading(false);
-      setErr(error.response.data.message);
     }
   };
+
   return (
     <div
-      className="w-full h-[100vh] bg-cover flex justify-center items-center"
+      className="w-full min-h-screen bg-cover bg-center flex justify-center items-center p-4 relative"
       style={{ backgroundImage: `url(${bg})` }}
     >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" />
+
       <form
-        className="w-[90%] h-[600px] max-w-[500px] bg-[#00000062] backdrop-blur shadow-lg shadow-black flex flex-col items-center justify-center gap-[20px] px-[20px]"
+        className="w-full max-w-md bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl flex flex-col items-center gap-5 p-8 sm:p-10 z-10"
         onSubmit={handleSignUp}
       >
-        <h1 className="text-white text-[30px] font-semibold mb-[30px]">
-          Register to <span className="text-blue-400">Virtual Assistant</span>
-        </h1>
-        <input
-          type="text"
-          placeholder="Enter your Name"
-          className="w-full h-[60px] outline-none border-2 border-white bg-transparent text-white placeholder-grey-300 px-[20px] py-[10px] rounded-full text-[18px]"
-          required
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full h-[60px] outline-none border-2 border-white bg-transparent text-white placeholder-grey-300 px-[20px] py-[10px] rounded-full text-[18px]"
-          required
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-        />
-        <div className="w-full h-[60px] outline-none border-2 border-white bg-transparent text-white  rounded-full text-[18px] relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="password"
-            className="w-full h-full rounded-full outline-none bg-transparent placeholder-grey-300 px-[20px] py-[10px] text-[18px]"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
-          {!showPassword && (
-            <IoMdEye
-              className="absolute top-[18px] right-[20px] w-[25px] h-[25px] text-[white] cursor-pointer"
-              onClick={() => setShowPassword(true)}
-            />
-          )}
-          {showPassword && (
-            <IoMdEyeOff
-              className="absolute top-[18px] right-[20px] w-[25px] h-[25px] text-[white] cursor-pointer"
-              onClick={() => setShowPassword(false)}
-            />
-          )}
+        <div className="text-center mb-2">
+          <h1 className="text-white text-3xl font-extrabold tracking-tight">
+            Register to <span className="text-blue-400">Virtual Assistant</span>
+          </h1>
+          <p className="text-gray-300 text-sm mt-1">
+            Create your account to design your custom AI assistant.
+          </p>
         </div>
-        {err.length > 0 && <p className="text-red-500 text-[17px]">*{err}</p>}
-        <button className="min-w-[150px] h-[60px] mt-[30px] text-black font-semibold bg-white rounded-full text-[19px]" disabled={loading}>
-          {loading ? "Loading..." : "Sign Up"}
-        </button>
-        <p
-          className="text-white text-[18px] cursor-pointer"
-          onClick={() => navigate("/signin")}
+
+        {errorMessage && (
+          <div className="w-full bg-red-500/15 border border-red-500/30 text-red-300 text-sm rounded-2xl px-4 py-2.5 text-center">
+            {errorMessage}
+          </div>
+        )}
+
+        <Input
+          type="text"
+          placeholder="Your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoComplete="name"
+        />
+
+        <Input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
+
+        <Input
+          type="password"
+          placeholder="Password (min 6 characters)"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="new-password"
+        />
+
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          loading={loading}
+          className="w-full mt-2"
         >
+          Sign Up
+        </Button>
+
+        <p className="text-gray-300 text-sm text-center mt-2">
           Already have an account?{" "}
-          <span className="text-blue-400">Sign In</span>
+          <Link
+            to="/signin"
+            className="text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-4 transition-colors"
+          >
+            Sign In
+          </Link>
         </p>
       </form>
     </div>

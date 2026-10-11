@@ -1,21 +1,37 @@
-import { v2 as cloudinary } from 'cloudinary'
-import fs from 'fs'
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import env from "./env.js";
+import ApiError from "../utils/apiError.js";
+
+cloudinary.config({
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
+});
+
 const uploadOnCloudinary = async (filePath) => {
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
+  if (!filePath) return null;
+
+  try {
+    const uploadResult = await cloudinary.uploader.upload(filePath, {
+      resource_type: "auto",
+      folder: "virtual_assistant",
     });
 
-    try {
-        const uploadResult = await cloudinary.uploader
-        .upload(filePath)
-        fs.unlinkSync(filePath)
-        return uploadResult.secure_url;
-    } catch (error) {
-        fs.unlinkSync(filePath)
-        return res.status(500).json({message:"Cloudinary error"})
+    // Remove temporary file from local storage after successful upload
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
-}
+
+    return uploadResult.secure_url;
+  } catch (error) {
+    // Ensure temporary file is cleaned up even if upload fails
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    console.error("Cloudinary upload failed:", error.message);
+    throw new ApiError(500, "Failed to upload file to Cloudinary", [error.message]);
+  }
+};
 
 export default uploadOnCloudinary;

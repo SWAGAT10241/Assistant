@@ -1,12 +1,65 @@
-# React + Vite
+# Virtual Assistant — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern, voice-enabled React 19 web application built with **Vite** and **Tailwind CSS**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Folder Structure
 
-## Expanding the ESLint configuration
+```
+frontend/
+├── src/
+│   ├── api/
+│   │   ├── apiClient.js          # Centralized Axios client with interceptors
+│   │   ├── auth.api.js           # Authentication API calls
+│   │   └── assistant.api.js      # Assistant settings & AI voice queries
+│   ├── assets/                   # Preset avatar images and animations
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Button.jsx        # Configurable button with loading states
+│   │   │   ├── Input.jsx         # Input with password toggle and error states
+│   │   │   └── Spinner.jsx       # Animated loading indicator
+│   │   ├── assistant/
+│   │   │   ├── Card.jsx          # Avatar preview & selection card
+│   │   │   ├── VoiceVisualizer.jsx # Glow & wave audio visualizer
+│   │   │   └── HistoryDrawer.jsx # Slide-over command history drawer
+│   │   └── routes/
+│   │       ├── ProtectedRoute.jsx# Auth & setup guard
+│   │       └── PublicRoute.jsx   # Public redirect guard
+│   ├── config/
+│   │   └── env.config.js         # Centralized environment config
+│   ├── context/
+│   │   ├── authContextDef.js     # React Context definition
+│   │   ├── AuthContext.jsx       # AuthProvider implementation
+│   │   └── UserContext.jsx       # Backwards-compatibility re-export
+│   ├── hooks/
+│   │   ├── useAuth.js            # Consumer hook for AuthContext
+│   │   └── useSpeechAssistant.js # Speech Recognition & Speech Synthesis hook
+│   ├── pages/
+│   │   ├── SignIn.jsx            # Sign in view
+│   │   ├── SignUp.jsx            # Registration view
+│   │   ├── Customize.jsx         # 2-Step assistant avatar & name wizard
+│   │   ├── Customize2.jsx        # Route alias for step 2
+│   │   └── Home.jsx              # Main voice dashboard
+│   ├── App.jsx                   # Route configurations
+│   ├── index.css                 # Tailwind CSS styles
+│   └── main.jsx                  # React DOM entry point
+├── .env.example                  # Environment variables template
+└── vite.config.js                # Vite build configuration
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Architectural Patterns
+
+1. **Separation of UI and Business Logic**:
+   - `Home.jsx` is purely presentational, consuming the `useSpeechAssistant` custom hook which manages speech recognition, speech synthesis, intent execution, and microphone permissions.
+   - API calls are fully isolated in `api/` services rather than scattered inside components.
+
+2. **State Management**:
+   - `AuthContext` provides global session state, user details, and assistant customization steps.
+   - Fast Refresh compliance: Context definitions are separated from provider components to ensure clean HMR during development.
+
+3. **Routing & Guards**:
+   - `ProtectedRoute`: Verifies authentication session and ensures assistant is configured before allowing access to the dashboard.
+   - `PublicRoute`: Redirects authenticated users from `/signin` and `/signup` back to `/`.
