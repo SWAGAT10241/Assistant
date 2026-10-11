@@ -18,8 +18,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.3
       cloudinary:
-        specifier: ^2.7.0
-        version: 2.9.0
+        specifier: ^2.11.0
+        version: 2.11.0
       cookie:
         specifier: ^1.0.2
         version: 1.1.1
@@ -192,8 +192,8 @@ packages:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
 
-  cloudinary@2.9.0:
-    resolution: {integrity: sha512-F3iKMOy4y0zy0bi5JBp94SC7HY7i/ImfTPSUV07iJmRzH1Iz8WavFfOlJTR1zvYM/xKGoiGZ3my/zy64In0IQQ==}
+  cloudinary@2.11.0:
+    resolution: {integrity: sha512-o2pAkDDqrzPFE/mn9GCfFjBIGQmPs++Ts6rtkFl4vY528DNHiMovKWjH16HBjeGa9iwI7eAad24aWN2emT0aww==}
     engines: {node: '>=9'}
 
   combined-stream@1.0.8:
@@ -945,7 +945,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  cloudinary@2.9.0:
+  cloudinary@2.11.0:
     dependencies:
       lodash: 4.17.23
 
