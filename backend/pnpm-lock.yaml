@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@google/genai':
-        specifier: ^2.28.0
-        version: 2.28.0(supports-color@5.5.0)
+        specifier: ^2.30.0
+        version: 2.30.0(supports-color@5.5.0)
       axios:
         specifier: ^1.20.0
         version: 1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
@@ -30,14 +30,14 @@ importers:
         specifier: ^2.8.5
         version: 2.8.6
       dotenv:
-        specifier: ^18.0.6
-        version: 18.0.6
+        specifier: ^18.0.8
+        version: 18.0.8
       express:
         specifier: ^5.1.0
         version: 5.2.1(supports-color@5.5.0)
       google-auth-library:
-        specifier: ^11.2.0
-        version: 11.2.0(supports-color@5.5.0)
+        specifier: ^11.3.1
+        version: 11.3.1(supports-color@5.5.0)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.3
@@ -45,16 +45,16 @@ importers:
         specifier: ^2.31.0
         version: 2.31.0
       mongoose:
-        specifier: ^9.11.1
-        version: 9.11.1
+        specifier: ^9.11.2
+        version: 9.11.2
       multer:
         specifier: ^2.4.0
         version: 2.4.0
 
 packages:
 
-  '@google/genai@2.28.0':
-    resolution: {integrity: sha512-hyNAJj+ywu3L46qlZod6KO/JvcT3QONz6VCiPevC/FWOjAD+LQb7DMLUoV8vzoLpt61Q0ruQX99iqbxEjPJWmw==}
+  '@google/genai@2.30.0':
+    resolution: {integrity: sha512-Gkv1ix8iZey/V3WF4lHaRS8C71P533jenDT/lA+fdPTCfXYfmCVHvo+0H5jTgzonqsmROQG7QpzLJkpoP/x7bg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       '@modelcontextprotocol/sdk': ^1.25.2
@@ -229,8 +229,8 @@ packages:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
 
-  dotenv@18.0.6:
-    resolution: {integrity: sha512-ZMVmohV6CvAJtj++pZNyggluUt6hbRdQAxc2+Z635RL6/AG/ruXv5lHnybUFoxMPL/yrTL/tsF4paZu2l7RA6Q==}
+  dotenv@18.0.8:
+    resolution: {integrity: sha512-2KDeoFoK/zRtcnbunCDlLG5VWVMcyqeQc6iK65o231nfNAcuGrKoqUQfJFUtBI+QlShk5HKIHxwebBtUl3rEfA==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -318,6 +318,10 @@ packages:
     resolution: {integrity: sha512-kB3rzJV7d9juLZh8/56QTXCwQfxyhdOMdyYk1HdQKFtF8TJTDTZQJtixWIwXdE9Jji91mC41DUNpjleo4L4eAQ==}
     engines: {node: '>=18'}
 
+  gaxios@8.3.1:
+    resolution: {integrity: sha512-h4/R7ay7JFXU5kmAkp/Y4Y4Vmm7m83tD579GUgfQQsRRGQ4TzSedyHla6XgTWohQuVffT3ldN4FF6uCqlRGaEA==}
+    engines: {node: '>=22'}
+
   gcp-metadata@8.1.2:
     resolution: {integrity: sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg==}
     engines: {node: '>=18'}
@@ -338,17 +342,13 @@ packages:
     resolution: {integrity: sha512-i1ydyHrqcIxXkWh/uBmVkzCvIuq5yiK2ATndIe5XxKholrG/MTYP9xGYka4sQhrbIAgGjL2B6NOE7rFaiF3fXw==}
     engines: {node: '>=18'}
 
-  google-auth-library@11.2.0:
-    resolution: {integrity: sha512-R9/Dwc3swSur04RnizQ6EBUmmcno2cC5cAKtrG/C+pY+W7c5l6rSnFWgMkR7NSYj1n6XWmb/KhcjxGslWm4yIA==}
+  google-auth-library@11.3.1:
+    resolution: {integrity: sha512-mQS0R2Ev/DKkzuWSYtDeq15uhDeaWuT2qzLYqJ41LmooxVKHmn5ut3pc6dlHY6wfHW/D7FBmOYjAtkjaD1A7qA==}
     engines: {node: '>=22'}
 
   google-logging-utils@1.1.3:
     resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
     engines: {node: '>=14'}
-
-  google-logging-utils@1.2.0:
-    resolution: {integrity: sha512-WE9av4wKDZgRjBwgVUabocx8T6/7o3Ca1Fat46FXDhXVAFibzNadedcOXrdgd1Kzmk8tsk/9ZH89Wyf/SqeZ3A==}
-    engines: {node: '>=18'}
 
   google-logging-utils@2.0.1:
     resolution: {integrity: sha512-HMhaQghlOTvbcb3c4T5jmmOMtG3JUF1iOQMezaJXL86CDS+Tm2vHd0IeLFRAx3+ewd+bo9E1HFHoy17X5aJa9A==}
@@ -413,8 +413,8 @@ packages:
   jws@4.0.1:
     resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
 
-  kareem@3.4.0:
-    resolution: {integrity: sha512-JAKhnR4S027v/8949QXNInRskgETCg9rFUMi1VjhGbjX+XltCAAEFcXykkSocNkom1kc66EMJfjWvhj87BDQKg==}
+  kareem@3.4.1:
+    resolution: {integrity: sha512-UlgCAFNAdk/HLSsbfkmbH8pJqpEN52Ek8RG53Ys1i3Q3gbCQruSrWpplZlgIGyDHX/LNoLW97ei3OG43s7UhUA==}
     engines: {node: '>=18.0.0'}
 
   lodash.includes@4.3.0:
@@ -513,8 +513,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@9.11.1:
-    resolution: {integrity: sha512-fVtjTVACOtAb0PjDDF+O5NebcEJy5JpAH+AXk16/5i36w38YkW6MZ+KWV54bdIOJFymDz1VjjA5Xg6L2QfjQjQ==}
+  mongoose@9.11.2:
+    resolution: {integrity: sha512-hFkl/2dccpD58coRAya3a/ht8ooAx9YPLzBfxVX9bEsgcrjsNkvuWQe8gplGfDdmzpw2RfFX1IB/G8PiFwyvwg==}
     engines: {node: '>=20.19.0'}
 
   mpath@0.9.0:
@@ -719,7 +719,7 @@ packages:
 
 snapshots:
 
-  '@google/genai@2.28.0(supports-color@5.5.0)':
+  '@google/genai@2.30.0(supports-color@5.5.0)':
     dependencies:
       google-auth-library: 10.9.1(supports-color@5.5.0)
       p-retry: 4.6.2
@@ -879,7 +879,7 @@ snapshots:
 
   depd@2.0.0: {}
 
-  dotenv@18.0.6: {}
+  dotenv@18.0.8: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -995,10 +995,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  gaxios@8.3.1(supports-color@5.5.0):
+    dependencies:
+      extend: 3.0.2
+      https-proxy-agent: 7.0.6(supports-color@5.5.0)
+      node-fetch: 3.3.2
+    transitivePeerDependencies:
+      - supports-color
+
   gcp-metadata@8.1.2(supports-color@5.5.0):
     dependencies:
       gaxios: 7.3.1(supports-color@5.5.0)
-      google-logging-utils: 1.2.0
+      google-logging-utils: 1.1.3
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - supports-color
@@ -1040,11 +1048,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  google-auth-library@11.2.0(supports-color@5.5.0):
+  google-auth-library@11.3.1(supports-color@5.5.0):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 7.3.1(supports-color@5.5.0)
+      gaxios: 8.3.1(supports-color@5.5.0)
       gcp-metadata: 9.1.0(supports-color@5.5.0)
       google-logging-utils: 2.0.1
       jws: 4.0.1
@@ -1052,8 +1060,6 @@ snapshots:
       - supports-color
 
   google-logging-utils@1.1.3: {}
-
-  google-logging-utils@1.2.0: {}
 
   google-logging-utils@2.0.1: {}
 
@@ -1132,7 +1138,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  kareem@3.4.0: {}
+  kareem@3.4.1: {}
 
   lodash.includes@4.3.0: {}
 
@@ -1187,10 +1193,10 @@ snapshots:
       bson: 7.3.3
       mongodb-connection-string-url: 7.0.2
 
-  mongoose@9.11.1:
+  mongoose@9.11.2:
     dependencies:
       '@standard-schema/spec': 1.1.0
-      kareem: 3.4.0
+      kareem: 3.4.1
       mongodb: 7.7.0
       mpath: 0.9.0
       mquery: 6.0.0
