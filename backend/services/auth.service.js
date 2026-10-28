@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import Workspace from "../models/workspace.model.js";
 import Project from "../models/project.model.js";
 import Assistant from "../models/assistant.model.js";
-import genToken from "../config/token.js";
+import { generateToken } from "../utils/token.util.js";
 import ApiError from "../utils/apiError.js";
 
 class AuthService {
@@ -58,7 +58,7 @@ class AuthService {
       visibility: "private",
     });
 
-    const token = genToken(user._id);
+    const token = generateToken(user._id);
 
     return {
       user: user.toJSON(),
@@ -89,7 +89,7 @@ class AuthService {
       throw new ApiError(401, "Invalid email or password");
     }
 
-    const token = genToken(user._id);
+    const token = generateToken(user._id);
 
     return {
       user: user.toJSON(),

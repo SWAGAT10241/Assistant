@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import uploadOnCloudinary from "../config/cloudinary.js";
+import uploadService from "./upload.service.js";
 import aiService from "./ai.service.js";
 import ApiError from "../utils/apiError.js";
 
@@ -22,7 +22,7 @@ class UserService {
     let assistantImage = imageUrl;
 
     if (file && file.path) {
-      assistantImage = await uploadOnCloudinary(file.path);
+      assistantImage = await uploadService.uploadToCloudinary(file.path);
     }
 
     const updateData = {};
