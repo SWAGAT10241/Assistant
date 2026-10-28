@@ -30,12 +30,12 @@
     "cookie": "^2.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^18.0.8",
+    "dotenv": "^18.0.9",
     "express": "^5.1.0",
     "google-auth-library": "^11.3.1",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.31.0",
-    "mongoose": "^9.11.2",
-    "multer": "^2.4.0"
+    "mongoose": "^9.11.3",
+    "multer": "^2.5.0"
   }
 }
