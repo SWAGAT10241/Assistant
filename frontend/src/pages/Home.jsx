@@ -5,16 +5,17 @@ import useAuth from "../hooks/useAuth";
 import useSpeechAssistant from "../hooks/useSpeechAssistant";
 import VoiceVisualizer from "../components/assistant/VoiceVisualizer";
 import HistoryDrawer from "../components/assistant/HistoryDrawer";
+import Alert from "../components/common/Alert";
 
 export function Home() {
-  const { user, logout, setUser } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleCommandSuccess = (transcript) => {
     // Append newly recorded command to local user history immediately
-    if (user && transcript) {
-      setUser((prev) => ({
+    if (transcript && updateUser) {
+      updateUser((prev) => ({
         ...prev,
         history: [transcript, ...(prev?.history || [])],
       }));
@@ -52,15 +53,19 @@ export function Home() {
 
       {/* Browser Speech API Warning if unsupported */}
       {!isSupported && (
-        <div className="absolute top-6 left-6 right-20 bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs sm:text-sm px-4 py-2.5 rounded-2xl backdrop-blur-md z-20">
-          ⚠️ Speech Recognition is not supported on this browser. For voice features, please use Google Chrome or Edge.
+        <div className="absolute top-6 left-6 right-20 max-w-xl z-20">
+          <Alert variant="warning">
+            Speech Recognition is not supported on this browser. For voice features, please use Google Chrome or Edge.
+          </Alert>
         </div>
       )}
 
       {/* Microphone Permission Warning */}
       {speechError && (
-        <div className="absolute top-20 left-6 right-6 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-200 text-xs sm:text-sm px-4 py-2.5 rounded-2xl backdrop-blur-md z-20 text-center">
-          {speechError}
+        <div className="absolute top-20 left-6 right-6 max-w-lg mx-auto z-20">
+          <Alert variant="error">
+            {speechError}
+          </Alert>
         </div>
       )}
 

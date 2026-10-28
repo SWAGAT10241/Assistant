@@ -4,6 +4,7 @@ import bg from "../assets/authBg.png";
 import useAuth from "../hooks/useAuth";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import Alert from "../components/common/Alert";
 
 export function SignIn() {
   const { login } = useAuth();
@@ -28,7 +29,9 @@ export function SignIn() {
       await login({ email, password });
       navigate("/");
     } catch (error) {
-      setErrorMessage(error.message || "Failed to sign in. Please verify your credentials.");
+      setErrorMessage(
+        error.message || "Failed to sign in. Please verify your credentials."
+      );
     } finally {
       setLoading(false);
     }
@@ -55,9 +58,13 @@ export function SignIn() {
         </div>
 
         {errorMessage && (
-          <div className="w-full bg-red-500/15 border border-red-500/30 text-red-300 text-sm rounded-2xl px-4 py-2.5 text-center">
+          <Alert
+            variant="error"
+            onDismiss={() => setErrorMessage("")}
+            className="w-full"
+          >
             {errorMessage}
-          </div>
+          </Alert>
         )}
 
         <Input

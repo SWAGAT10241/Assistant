@@ -4,6 +4,7 @@ import bg from "../assets/authBg.png";
 import useAuth from "../hooks/useAuth";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import Alert from "../components/common/Alert";
 
 export function SignUp() {
   const { register } = useAuth();
@@ -37,7 +38,9 @@ export function SignUp() {
       await register({ name, email, password });
       navigate("/customize");
     } catch (error) {
-      setErrorMessage(error.message || "Failed to create account. Please try again.");
+      setErrorMessage(
+        error.message || "Failed to create account. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -64,9 +67,13 @@ export function SignUp() {
         </div>
 
         {errorMessage && (
-          <div className="w-full bg-red-500/15 border border-red-500/30 text-red-300 text-sm rounded-2xl px-4 py-2.5 text-center">
+          <Alert
+            variant="error"
+            onDismiss={() => setErrorMessage("")}
+            className="w-full"
+          >
             {errorMessage}
-          </div>
+          </Alert>
         )}
 
         <Input
@@ -103,7 +110,7 @@ export function SignUp() {
           loading={loading}
           className="w-full mt-2"
         >
-          Sign Up
+          Create Account
         </Button>
 
         <p className="text-gray-300 text-sm text-center mt-2">

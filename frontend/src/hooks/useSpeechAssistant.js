@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import assistantApi from "../api/assistant.api";
+import intentExecutorService from "../services/intentExecutor.service";
 
-export function useSpeechAssistant({ assistantName = "Assistant", userName = "User", onCommandSuccess }) {
+/**
+ * Custom hook managing Speech Recognition (STT), Assistant AI Querying,
+ * Speech Synthesis (TTS), and Intent Execution.
+ */
+export function useSpeechAssistant({
+  assistantName = "Assistant",
+  userName = "User",
+  onCommandSuccess,
+}) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [userText, setUserText] = useState("");
@@ -20,10 +29,13 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
   /**
    * Speak response out loud using SpeechSynthesis
    */
-  const speak = useCallback(
-    (text, callback) => {
-      if (!window.speechSynthesis || !text) return;
+  const speak = useCallback((text, callback) => {
+    if (!window.speechSynthesis || !text) {
+      if (callback) callback();
+      return;
+    }
 
+    try {
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -58,22 +70,34 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
       };
 
       window.speechSynthesis.speak(utterance);
-    },
-    []
-  );
+    } catch (err) {
+      console.warn("Speech synthesis exception:", err);
+      isSpeakingRef.current = false;
+      setIsSpeaking(false);
+      if (callback) callback();
+    }
+  }, []);
 
   /**
-   * Start speech recognition
+   * Start speech recognition safely
    */
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || isSpeakingRef.current || isRecognizingRef.current) {
-      if (typeof window !== "undefined" && !(window.SpeechRecognition || window.webkitSpeechRecognition)) {
+    if (
+      !recognitionRef.current ||
+      isSpeakingRef.current ||
+      isRecognizingRef.current
+    ) {
+      if (
+        typeof window !== "undefined" &&
+        !(window.SpeechRecognition || window.webkitSpeechRecognition)
+      ) {
         setSpeechError(
           "Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari."
         );
       }
       return;
     }
+
     try {
       recognitionRef.current.start();
     } catch (err) {
@@ -97,54 +121,25 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
   }, []);
 
   /**
-   * Execute browser actions based on assistant intent
+   * Handle assistant intent and speech feedback
    */
-  const executeIntent = useCallback(
+  const handleAssistantResult = useCallback(
     (data) => {
-      const { type, userInput, response } = data;
+      const { response } = data || {};
 
-      // Speak response out loud, then resume listening
       speak(response, () => {
         if (isMountedRef.current) {
           setTimeout(() => startListening(), 800);
         }
       });
 
-      if (!type) return;
-
-      const encodedQuery = encodeURIComponent(userInput || "");
-
-      switch (type) {
-        case "google-search":
-          window.open(`https://www.google.com/search?q=${encodedQuery}`, "_blank");
-          break;
-        case "calculator-open":
-          window.open(`https://www.google.com/search?q=calculator`, "_blank");
-          break;
-        case "instagram-open":
-          window.open(`https://www.instagram.com`, "_blank");
-          break;
-        case "facebook-open":
-          window.open(`https://www.facebook.com`, "_blank");
-          break;
-        case "weather-show":
-          window.open(`https://www.google.com/search?q=weather`, "_blank");
-          break;
-        case "youtube-search":
-        case "youtube-play":
-          window.open(
-            `https://www.youtube.com/results?search_query=${encodedQuery}`,
-            "_blank"
-          );
-          break;
-        default:
-          break;
-      }
+      // Delegate browser action dispatching to dedicated business service
+      intentExecutorService.execute(data);
     },
     [speak, startListening]
   );
 
-  // Initialize Speech Recognition
+  // Initialize Speech Recognition lifecycle
   useEffect(() => {
     isMountedRef.current = true;
     const SpeechRecognition =
@@ -184,7 +179,9 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
       setIsListening(false);
 
       if (event.error === "not-allowed") {
-        setSpeechError("Microphone access was denied. Please allow microphone permissions.");
+        setSpeechError(
+          "Microphone access was denied. Please allow microphone permissions in your browser."
+        );
       } else if (event.error !== "aborted") {
         // Attempt restart for non-fatal errors
         if (isMountedRef.current && !isSpeakingRef.current) {
@@ -210,10 +207,11 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
           const data = await assistantApi.askAssistant(transcript);
           setAiText(data.response || "Here is what I found.");
           setUserText("");
-          executeIntent(data);
+          handleAssistantResult(data);
           if (onCommandSuccess) onCommandSuccess(transcript);
         } catch (err) {
-          const errorMsg = err.message || "I encountered an error understanding that.";
+          const errorMsg =
+            err.message || "I encountered an error understanding that.";
           speak(errorMsg);
           setAiText(errorMsg);
         }
@@ -241,7 +239,15 @@ export function useSpeechAssistant({ assistantName = "Assistant", userName = "Us
         window.speechSynthesis.cancel();
       }
     };
-  }, [assistantName, userName, executeIntent, onCommandSuccess, speak, startListening, stopListening]);
+  }, [
+    assistantName,
+    userName,
+    handleAssistantResult,
+    onCommandSuccess,
+    speak,
+    startListening,
+    stopListening,
+  ]);
 
   return {
     isListening,

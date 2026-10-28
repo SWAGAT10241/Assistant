@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdKeyboardBackspace } from "react-icons/md";
-import Card from "../components/Card";
+import AvatarCard from "../components/assistant/AvatarCard";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
-import useAuth from "../hooks/useAuth";
+import Alert from "../components/common/Alert";
+import useAssistantCustomization from "../hooks/useAssistantCustomization";
 
 import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
@@ -25,83 +25,47 @@ const PRESET_IMAGES = [
   image7,
 ];
 
+/**
+ * Assistant Customization View
+ * Step 1: Select Preset Avatar or Upload Custom Image
+ * Step 2: Name Assistant
+ */
 export function Customize() {
-  const {
-    user,
-    selectedImage,
-    setSelectedImage,
-    frontendImage,
-    setFrontendImage,
-    backendImage,
-    setBackendImage,
-    updateAssistantProfile,
-  } = useAuth();
-
-  const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [step, setStep] = useState(1);
-  const [assistantName, setAssistantName] = useState(
-    user?.assistantName || "Siri"
-  );
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    step,
+    setStep,
+    assistantName,
+    setAssistantName,
+    selectedPreset,
+    customFile,
+    previewUrl,
+    activeImage,
+    loading,
+    errorMessage,
+    setErrorMessage,
+    handleSelectPreset,
+    handleCustomImage,
+    goToNextStep,
+    goBack,
+    saveAssistant,
+  } = useAssistantCustomization(PRESET_IMAGES);
 
-  const handleCustomImageUpload = (e) => {
+  const onFileInputChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setBackendImage(file);
-      setFrontendImage(URL.createObjectURL(file));
-      setSelectedImage("custom");
+      handleCustomImage(file);
     }
   };
-
-  const handleSelectPreset = (img) => {
-    setSelectedImage(img);
-    setBackendImage(null);
-    setFrontendImage(null);
-  };
-
-  const handleFinalSubmit = async () => {
-    if (!assistantName.trim()) {
-      setErrorMessage("Please give your assistant a name.");
-      return;
-    }
-
-    setLoading(true);
-    setErrorMessage("");
-
-    try {
-      await updateAssistantProfile({
-        assistantName: assistantName.trim(),
-        file: backendImage,
-        imageUrl: backendImage ? null : selectedImage,
-      });
-
-      navigate("/");
-    } catch (err) {
-      setErrorMessage(err.message || "Failed to update assistant settings.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const currentPreviewImage =
-    selectedImage === "custom" ? frontendImage : selectedImage || user?.assistantImage;
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-t from-black via-gray-950 to-[#030353] flex flex-col justify-center items-center p-6 relative">
       {/* Back button */}
       <button
-        onClick={() => {
-          if (step === 2) {
-            setStep(1);
-          } else {
-            navigate("/");
-          }
-        }}
+        onClick={goBack}
         className="absolute top-6 left-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-        aria-label="Back"
+        aria-label="Go back"
       >
         <MdKeyboardBackspace className="w-7 h-7" />
       </button>
@@ -120,9 +84,15 @@ export function Customize() {
         />
       </div>
 
+      {/* Error Alert */}
       {errorMessage && (
-        <div className="mb-4 bg-red-500/20 border border-red-500/40 text-red-300 text-sm rounded-xl px-4 py-2 text-center max-w-md">
-          {errorMessage}
+        <div className="w-full max-w-md mb-6">
+          <Alert
+            variant="error"
+            onDismiss={() => setErrorMessage("")}
+          >
+            {errorMessage}
+          </Alert>
         </div>
       )}
 
@@ -135,10 +105,10 @@ export function Customize() {
 
           <div className="flex justify-center items-center flex-wrap gap-4 max-w-3xl">
             {PRESET_IMAGES.map((img, index) => (
-              <Card
+              <AvatarCard
                 key={index}
                 image={img}
-                isSelected={selectedImage === img}
+                isSelected={!customFile && selectedPreset === img}
                 onSelect={() => handleSelectPreset(img)}
                 alt={`Preset avatar ${index + 1}`}
               />
@@ -146,17 +116,25 @@ export function Customize() {
 
             {/* Custom Image Upload Card */}
             <div
+              tabIndex={0}
+              role="button"
+              aria-label="Upload custom assistant image"
               onClick={() => fileInputRef.current?.click()}
-              className={`w-[70px] h-[140px] lg:w-[150px] lg:h-[250px] bg-[#020220] rounded-2xl overflow-hidden cursor-pointer flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
-                selectedImage === "custom"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  fileInputRef.current?.click();
+                }
+              }}
+              className={`w-[70px] h-[140px] lg:w-[150px] lg:h-[250px] bg-[#020220] rounded-2xl overflow-hidden cursor-pointer flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 select-none focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                customFile
                   ? "border-4 border-white shadow-2xl shadow-blue-500/50 scale-105"
                   : "border-2 border-dashed border-blue-900/60 hover:border-white/80"
               }`}
             >
-              {frontendImage ? (
+              {customFile && previewUrl ? (
                 <img
-                  src={frontendImage}
-                  alt="Custom Avatar"
+                  src={previewUrl}
+                  alt="Custom Avatar Preview"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -172,15 +150,15 @@ export function Customize() {
               accept="image/*"
               ref={fileInputRef}
               hidden
-              onChange={handleCustomImageUpload}
+              onChange={onFileInputChange}
             />
           </div>
 
           <Button
             variant="primary"
             size="lg"
-            disabled={!selectedImage}
-            onClick={() => setStep(2)}
+            disabled={!selectedPreset && !customFile}
+            onClick={goToNextStep}
             className="mt-10"
           >
             Next: Name Assistant
@@ -192,10 +170,10 @@ export function Customize() {
       {step === 2 && (
         <div className="flex flex-col items-center max-w-md w-full animate-fadeIn text-center">
           {/* Avatar Preview */}
-          {currentPreviewImage && (
+          {activeImage && (
             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-400 shadow-xl shadow-blue-950 mb-6">
               <img
-                src={currentPreviewImage}
+                src={activeImage}
                 alt="Selected Avatar Preview"
                 className="w-full h-full object-cover"
               />
@@ -232,7 +210,7 @@ export function Customize() {
               variant="primary"
               size="lg"
               loading={loading}
-              onClick={handleFinalSubmit}
+              onClick={saveAssistant}
               className="w-1/2"
             >
               Finish Setup
