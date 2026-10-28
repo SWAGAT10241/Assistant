@@ -4,21 +4,20 @@ import authApi from "../api/auth.api";
 import assistantApi from "../api/assistant.api";
 import envConfig from "../config/env.config";
 
+/**
+ * Authentication and User Session Context Provider
+ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Assistant customization step state
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [frontendImage, setFrontendImage] = useState(null);
-  const [backendImage, setBackendImage] = useState(null);
-
   /**
-   * Check if user has an active session
+   * Check if user has an active session from server cookie
    */
   const checkAuth = useCallback(async () => {
     try {
+      setLoading(true);
       const currentUser = await authApi.getCurrentUser();
       setUser(currentUser);
       setAuthError(null);
@@ -31,6 +30,7 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Initial session check on application mount
   useEffect(() => {
     let isMounted = true;
     (async () => {
@@ -58,6 +58,7 @@ export function AuthProvider({ children }) {
 
   /**
    * Log in user
+   * @param {{ email: string, password: string }} credentials
    */
   const login = async (credentials) => {
     try {
@@ -77,6 +78,7 @@ export function AuthProvider({ children }) {
 
   /**
    * Register new user
+   * @param {{ name: string, email: string, password: string }} userData
    */
   const register = async (userData) => {
     try {
@@ -95,7 +97,7 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Log out user
+   * Log out user and clear user state
    */
   const logout = async () => {
     try {
@@ -104,14 +106,13 @@ export function AuthProvider({ children }) {
       console.warn("Logout error:", err.message);
     } finally {
       setUser(null);
-      setSelectedImage(null);
-      setFrontendImage(null);
-      setBackendImage(null);
+      setAuthError(null);
     }
   };
 
   /**
-   * Update assistant configuration
+   * Update assistant configuration (avatar and name)
+   * @param {{ assistantName?: string, file?: File, imageUrl?: string }} config
    */
   const updateAssistantProfile = async ({ assistantName, file, imageUrl }) => {
     const updatedUser = await assistantApi.updateAssistant({
@@ -125,14 +126,24 @@ export function AuthProvider({ children }) {
 
   /**
    * Query assistant AI command
+   * @param {string} command
    */
   const getGeminiResponse = async (command) => {
     return await assistantApi.askAssistant(command);
   };
 
+  /**
+   * Update local user state safely
+   */
+  const updateUser = useCallback((updater) => {
+    setUser((prev) => (typeof updater === "function" ? updater(prev) : { ...prev, ...updater }));
+  }, []);
+
   const contextValue = {
     user,
     setUser,
+    updateUser,
+    isAuthenticated: Boolean(user),
     userData: user, // Alias for backward compatibility
     setUserData: setUser, // Alias for backward compatibility
     loading,
@@ -145,13 +156,6 @@ export function AuthProvider({ children }) {
     updateAssistantProfile,
     getGeminiResponse,
     serverUrl: envConfig.API_BASE_URL,
-    // Customization state
-    selectedImage,
-    setSelectedImage,
-    frontendImage,
-    setFrontendImage,
-    backendImage,
-    setBackendImage,
   };
 
   return (
