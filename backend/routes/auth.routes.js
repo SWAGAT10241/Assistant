@@ -6,16 +6,42 @@ import {
   getCurrentUser,
 } from "../controllers/auth.controller.js";
 import isAuth from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { authLimiter } from "../middlewares/rateLimiter.middleware.js";
+import {
+  registerValidator,
+  loginValidator,
+} from "../validations/auth.validation.js";
 
 const authRouter = express.Router();
 
-// Register (supporting both /register and /signup)
-authRouter.post("/register", register);
-authRouter.post("/signup", register);
+// Register with strict rate limiting & validation
+authRouter.post(
+  "/register",
+  authLimiter,
+  validate(registerValidator),
+  register
+);
+authRouter.post(
+  "/signup",
+  authLimiter,
+  validate(registerValidator),
+  register
+);
 
-// Login (supporting both /login and /signin)
-authRouter.post("/login", login);
-authRouter.post("/signin", login);
+// Login with strict rate limiting & validation
+authRouter.post(
+  "/login",
+  authLimiter,
+  validate(loginValidator),
+  login
+);
+authRouter.post(
+  "/signin",
+  authLimiter,
+  validate(loginValidator),
+  login
+);
 
 // Logout (supporting both POST and GET)
 authRouter.post("/logout", logout);

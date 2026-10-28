@@ -6,6 +6,12 @@ import {
 } from "../controllers/user.controller.js";
 import isAuth from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { aiLimiter } from "../middlewares/rateLimiter.middleware.js";
+import {
+  askCommandValidator,
+  updateAssistantValidator,
+} from "../validations/user.validation.js";
 
 const userRouter = express.Router();
 
@@ -18,17 +24,31 @@ userRouter.post(
   "/update",
   isAuth,
   upload.single("assistantImage"),
+  validate(updateAssistantValidator),
   updateAssistant
 );
 userRouter.put(
   "/update",
   isAuth,
   upload.single("assistantImage"),
+  validate(updateAssistantValidator),
   updateAssistant
 );
 
-// Ask assistant AI command (supporting both /asktoassistant and /ask)
-userRouter.post("/asktoassistant", isAuth, askToAssistant);
-userRouter.post("/ask", isAuth, askToAssistant);
+// Ask assistant AI command with dedicated AI Rate Limiter
+userRouter.post(
+  "/asktoassistant",
+  isAuth,
+  aiLimiter,
+  validate(askCommandValidator),
+  askToAssistant
+);
+userRouter.post(
+  "/ask",
+  isAuth,
+  aiLimiter,
+  validate(askCommandValidator),
+  askToAssistant
+);
 
 export default userRouter;
