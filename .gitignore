@@ -55,3 +55,9 @@ Thumbs.db
 *.sln
 *.swp
 *~
+
+# ===================================================
+# Knowledge Graph & Graphify Artifacts
+# ===================================================
+graphify-out/
+.graphify*
