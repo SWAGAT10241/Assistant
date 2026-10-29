@@ -130,3 +130,4 @@ If any check fails:
   * `test(backend)`: Add unit tests for rate limiter
   * `chore(deps)`: Bump lockfile dependencies
 * **Atomic Commits**: Each commit must contain only related changes. Do not bundle unrelated refactoring, dependencies, and features into a single commit.
+
