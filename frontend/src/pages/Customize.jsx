@@ -1,11 +1,13 @@
 import React, { useRef } from "react";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { StringTilt, StringMagnetic, StringSpotlight } from "@fiddle-digital/string-tune";
 import AvatarCard from "../components/assistant/AvatarCard";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import Alert from "../components/common/Alert";
 import useAssistantCustomization from "../hooks/useAssistantCustomization";
+import useStringTune from "../hooks/useStringTune";
 
 import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
@@ -32,6 +34,9 @@ const PRESET_IMAGES = [
  */
 export function Customize() {
   const fileInputRef = useRef(null);
+
+  // Initialize StringTune modular animations for the customization wizard
+  useStringTune([StringTilt, StringMagnetic, StringSpotlight]);
 
   const {
     step,
@@ -63,6 +68,8 @@ export function Customize() {
     <div className="w-full min-h-screen bg-gradient-to-t from-black via-gray-950 to-[#030353] flex flex-col justify-center items-center p-6 relative">
       {/* Back button */}
       <button
+        string="magnetic"
+        string-magnetic-strength="0.3"
         onClick={goBack}
         className="absolute top-6 left-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
         aria-label="Go back"
@@ -118,6 +125,8 @@ export function Customize() {
             <div
               tabIndex={0}
               role="button"
+              string="tilt"
+              string-tilt-max="12"
               aria-label="Upload custom assistant image"
               onClick={() => fileInputRef.current?.click()}
               onKeyDown={(e) => {
@@ -155,6 +164,8 @@ export function Customize() {
           </div>
 
           <Button
+            string="magnetic"
+            string-magnetic-strength="0.3"
             variant="primary"
             size="lg"
             disabled={!selectedPreset && !customFile}
@@ -198,6 +209,8 @@ export function Customize() {
 
           <div className="flex items-center gap-4 w-full">
             <Button
+              string="magnetic"
+              string-magnetic-strength="0.3"
               variant="outline"
               size="lg"
               onClick={() => setStep(1)}
@@ -207,6 +220,8 @@ export function Customize() {
             </Button>
 
             <Button
+              string="magnetic"
+              string-magnetic-strength="0.3"
               variant="primary"
               size="lg"
               loading={loading}

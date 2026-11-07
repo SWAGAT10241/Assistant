@@ -9,12 +9,15 @@ export function AvatarCard({
   onSelect,
   alt = "Assistant Avatar",
   className = "",
+  ...rest
 }) {
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={onSelect}
+      string="tilt"
+      string-tilt-max="12"
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -27,6 +30,7 @@ export function AvatarCard({
           : "border-2 border-blue-900/40 hover:border-white/80 hover:shadow-xl hover:shadow-blue-950"
       } ${className}`}
       aria-label={`Select ${alt}`}
+      {...rest}
     >
       <img
         src={image}

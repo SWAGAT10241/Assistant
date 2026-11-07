@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CgMenuRight } from "react-icons/cg";
+import { StringTilt, StringMagnetic, StringSpotlight } from "@fiddle-digital/string-tune";
 import useAuth from "../hooks/useAuth";
 import useSpeechAssistant from "../hooks/useSpeechAssistant";
+import useStringTune from "../hooks/useStringTune";
 import VoiceVisualizer from "../components/assistant/VoiceVisualizer";
 import HistoryDrawer from "../components/assistant/HistoryDrawer";
 import Alert from "../components/common/Alert";
@@ -11,6 +13,9 @@ export function Home() {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Initialize StringTune modular animations for the interactive voice home view
+  useStringTune([StringTilt, StringMagnetic, StringSpotlight]);
 
   const handleCommandSuccess = (transcript) => {
     // Append newly recorded command to local user history immediately
@@ -44,6 +49,8 @@ export function Home() {
     <div className="w-full min-h-screen bg-gradient-to-t from-black via-gray-950 to-[#02023d] flex flex-col justify-center items-center px-4 py-8 overflow-hidden relative select-none">
       {/* Header Menu Button */}
       <button
+        string="magnetic"
+        string-magnetic-strength="0.3"
         onClick={() => setDrawerOpen(true)}
         className="absolute top-6 right-6 text-white/80 hover:text-white p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-colors z-30 cursor-pointer shadow-lg"
         aria-label="Open control panel"

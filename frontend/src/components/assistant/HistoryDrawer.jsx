@@ -33,6 +33,8 @@ export function HistoryDrawer({
             <p className="text-gray-400 text-xs">Logged in as {userName || "User"}</p>
           </div>
           <button
+            string="magnetic"
+            string-magnetic-strength="0.3"
             onClick={onClose}
             className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors"
             aria-label="Close menu"

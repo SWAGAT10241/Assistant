@@ -25,7 +25,11 @@ export function VoiceVisualizer({
           }`}
         />
 
-        <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl bg-black/60 backdrop-blur-md">
+        <div
+          string="tilt"
+          string-tilt-max="10"
+          className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl bg-black/60 backdrop-blur-md cursor-pointer"
+        >
           <img
             src={assistantImage || aiImg}
             alt={assistantName || "Assistant"}

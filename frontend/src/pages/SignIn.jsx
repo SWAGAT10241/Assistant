@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { StringTilt, StringMagnetic } from "@fiddle-digital/string-tune";
 import bg from "../assets/authBg.png";
 import useAuth from "../hooks/useAuth";
+import useStringTune from "../hooks/useStringTune";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import Alert from "../components/common/Alert";
@@ -9,6 +11,9 @@ import Alert from "../components/common/Alert";
 export function SignIn() {
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Initialize StringTune subtle tilt and magnetic effects
+  useStringTune([StringTilt, StringMagnetic]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +50,8 @@ export function SignIn() {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" />
 
       <form
+        string="tilt"
+        string-tilt-max="5"
         className="w-full max-w-md bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl flex flex-col items-center gap-5 p-8 sm:p-10 z-10"
         onSubmit={handleSignIn}
       >
@@ -87,6 +94,8 @@ export function SignIn() {
 
         <Button
           type="submit"
+          string="magnetic"
+          string-magnetic-strength="0.3"
           variant="primary"
           size="lg"
           loading={loading}

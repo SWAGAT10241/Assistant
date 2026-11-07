@@ -11,6 +11,7 @@ export function Button({
   loading = false,
   className = "",
   icon: Icon,
+  ...rest
 }) {
   const baseStyles =
     "inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 cursor-pointer select-none active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed";
@@ -40,6 +41,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled || loading}
       className={`${baseStyles} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
+      {...rest}
     >
       {loading ? (
         <span className="flex items-center gap-2">
