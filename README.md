@@ -1,6 +1,8 @@
 # Virtual Assistant (AI Operating System)
 
-A full-stack, voice-enabled intelligent Virtual Assistant powered by **React 19**, **Node.js/Express 5**, **Google Gemini AI**, and **MongoDB**. Architected with clean separation of UI from business logic, modular reusable components, centralized configurations, robust error handling, automated request validation, and a scalable versioned API structure.
+A full-stack, voice-interactive intelligent Virtual Assistant web application powered by **React 19**, **Vite**, **shadcn/ui**, **StringTune**, **Node.js / Express 5**, **Google Gemini AI**, and **MongoDB**. 
+
+Engineered with a strict layered architecture, zero-vulnerability security standard, pre-built design system tokens, physics-driven micro-interactions, automated testing, and continuous delivery.
 
 ---
 
@@ -8,144 +10,72 @@ A full-stack, voice-enabled intelligent Virtual Assistant powered by **React 19*
 
 ```
 Assistant/
-├── backend/
-│   ├── config/             # Centralized environment, DB, & Cloudinary configurations
-│   │   ├── env.js          # Sane defaults, CORS origin parsing, & env typing
-│   │   ├── db.js           # Mongoose MongoDB connection
-│   │   └── cloudinary.js   # Cloudinary storage SDK configuration
-│   ├── controllers/        # Thin HTTP request & response handlers
-│   │   ├── auth.controller.js
-│   │   ├── user.controller.js
-│   │   ├── assistant.controller.js
-│   │   ├── conversation.controller.js
-│   │   └── message.controller.js
-│   ├── middlewares/        # Security, auth, validation, uploads & errors
-│   │   ├── security.middleware.js # Security headers (HSTS, CSP, X-Frame, X-Content-Type)
-│   │   ├── sanitize.middleware.js # NoSQL Injection & XSS sanitization
-│   │   ├── rateLimiter.middleware.js # Multi-tier rate limiters (API, Auth, AI)
-│   │   ├── auth.middleware.js     # JWT verification (cookie & Bearer header)
-│   │   ├── validate.middleware.js # Request payload schema validator
-│   │   ├── multer.middleware.js   # 5MB file upload limit & extension checking
-│   │   └── error.middleware.js    # Normalized error handler & 404 responder
-│   ├── models/             # Mongoose schemas & domain models
-│   │   ├── index.js        # Centralized barrel export
-│   │   ├── user.model.js
-│   │   ├── assistant.model.js
-│   │   ├── conversation.model.js
-│   │   ├── message.model.js
-│   │   ├── workspace.model.js
-│   │   └── project.model.js
-│   ├── routes/             # Scalable versioned REST API routers (/api & /api/v1)
-│   │   ├── index.js        # Root router aggregation & health check
-│   │   ├── auth.routes.js
-│   │   ├── user.routes.js
-│   │   ├── assistant.routes.js
-│   │   ├── conversation.routes.js
-│   │   └── message.routes.js
-│   ├── services/           # Decoupled business logic & external integrations
-│   │   ├── ai.service.js          # Gemini prompt orchestration & intent parsing
-│   │   ├── auth.service.js        # Registration, login & workspace onboarding
-│   │   ├── user.service.js        # Profile retrieval & voice command logging
-│   │   ├── assistant.service.js   # Assistant management & visibility
-│   │   ├── conversation.service.js# Conversation threads
-│   │   ├── message.service.js     # Message storage & pinning
-│   │   └── upload.service.js      # Cloudinary upload handler & temp file cleanup
-│   ├── utils/              # Shared helper utilities
-│   │   ├── apiResponse.js  # Standardized { statusCode, success, message, data } envelope
-│   │   ├── apiError.js     # Custom ApiError with status codes & error list
-│   │   ├── asyncHandler.js # Async error propagation wrapper
-│   │   └── token.util.js   # JWT signing and verification utility
-│   ├── validations/        # Request payload validation rules
-│   │   ├── auth.validation.js
-│   │   └── user.validation.js
-│   ├── tests/              # Automated Node.js test runner suite (15 unit tests)
-│   │   ├── config-utils.test.js
-│   │   ├── security.test.js
-│   │   ├── token-util.test.js
-│   │   └── validation.test.js
-│   ├── app.js              # Express app configuration & middleware pipeline
-│   ├── index.js            # Server entrypoint with DB connection & graceful shutdown
-│   └── .env.example        # Backend environment variables template
+├── backend/                  # Node.js + Express 5 API Server
+│   ├── config/              # Centralized environment, DB, & Cloudinary configurations
+│   ├── controllers/         # Thin HTTP request & response handlers
+│   ├── middlewares/         # Multi-tier rate limiting, sanitization, auth & validation
+│   ├── models/              # Mongoose domain models (User, Assistant, Conversation, Message)
+│   ├── routes/              # Versioned REST API routers (/api & /api/v1)
+│   ├── services/            # Pure business logic (Auth, AI Gemini, Assistant, User, Upload)
+│   ├── utils/               # Standardized ApiResponse, ApiError, asyncHandler & JWT token utilities
+│   ├── validations/         # Schema validation rules for requests
+│   └── tests/               # Automated Node.js test runner suite (15 unit tests)
 │
-└── frontend/
-    ├── src/
-    │   ├── api/            # Centralized API client (Axios) & service functions
-    │   │   ├── index.js          # Barrel export
-    │   │   ├── apiClient.js      # Axios instance with normalized error interceptors
-    │   │   ├── auth.api.js       # Auth API client
-    │   │   ├── assistant.api.js  # Assistant & AI voice query client
-    │   │   ├── conversation.api.js # Conversation threads API client
-    │   │   └── message.api.js    # Message API client
-    │   ├── components/     # Modular and reusable UI components
-    │   │   ├── common/     # Generic UI elements
-    │   │   │   ├── Button.jsx        # Configurable button with loading states
-    │   │   │   ├── Input.jsx         # Input with password toggle and error states
-    │   │   │   ├── Alert.jsx         # Accessible alert banner (error, warning, success, info)
-    │   │   │   ├── Spinner.jsx       # Animated loading indicator
-    │   │   │   └── ErrorBoundary.jsx # React error boundary component
-    │   │   ├── assistant/  # Domain-specific assistant components
-    │   │   │   ├── AvatarCard.jsx    # Avatar preview & selection card
-    │   │   │   ├── VoiceVisualizer.jsx # Glow & wave audio visualizer
-    │   │   │   └── HistoryDrawer.jsx # Slide-over command history drawer
-    │   │   └── routes/     # ProtectedRoute & PublicRoute guards
-    │   ├── config/         # Environment configuration module
-    │   │   └── env.config.js
-    │   ├── context/        # Clean state management
-    │   │   ├── authContextDef.js # Fast Refresh compliant context definition
-    │   │   └── AuthContext.jsx   # Dedicated user session & auth state provider
-    │   ├── hooks/          # Custom React hooks
-    │   │   ├── useAuth.js            # Auth context consumer hook
-    │   │   ├── useSpeechAssistant.js # Speech Recognition & Synthesis hook
-    │   │   └── useAssistantCustomization.js # Wizard state for assistant setup
-    │   ├── services/       # Frontend business logic services
-    │   │   └── intentExecutor.service.js # Intent action dispatcher (Google, YouTube, Weather, etc.)
-    │   ├── pages/          # View pages
-    │   │   ├── Home.jsx              # Main voice dashboard
-    │   │   ├── Customize.jsx         # 2-Step assistant avatar & name wizard
-    │   │   ├── SignIn.jsx            # Sign in view
-    │   │   └── SignUp.jsx            # Registration view
-    │   ├── App.jsx         # Declarative client routes with ErrorBoundary
-    │   ├── main.jsx        # App root initialization
-    │   └── index.css       # Tailwind CSS styles
-    └── .env.example        # Frontend environment variables template
+├── frontend/                 # React 19 + Vite + Tailwind CSS v4 Client
+│   ├── src/
+│   │   ├── api/             # Centralized Axios API client modules
+│   │   ├── components/
+│   │   │   ├── ui/          # Official shadcn/ui component library (Button, Card, Dialog, etc.)
+│   │   │   ├── common/      # Shared components (Button, Input, Alert, Spinner, ErrorBoundary)
+│   │   │   ├── assistant/   # Domain components (VoiceVisualizer, AvatarCard, HistoryDrawer)
+│   │   │   └── routes/      # ProtectedRoute & PublicRoute route guards
+│   │   ├── context/         # Fast-Refresh compliant React context state providers
+│   │   ├── hooks/           # Custom reusable hooks (useAuth, useSpeechAssistant, useStringTune)
+│   │   ├── lib/             # Canonical cn(...) styling utility
+│   │   ├── pages/           # Route views (Home, Customize, SignIn, SignUp)
+│   │   └── services/        # Client-side intent execution (Google, YouTube, Weather, etc.)
+│   └── public/              # Static assets
+│
+└── graphify-out/             # Knowledge graph & codebase visualization
+    ├── graph.html           # Interactive 3D/2D visual graph of all files & connections
+    └── GRAPH_REPORT.md      # Architectural analysis, god nodes, and community clusters
 ```
 
 ---
 
-## Refactoring & Engineering Highlights
+## Key Features & Engineering Highlights
 
-1. **Clean Separation of UI and Business Logic**:
-   - **Backend**: Controllers are thin delegates that parse HTTP requests and return standard `ApiResponse` objects. All business logic, DB queries, and external APIs (Gemini, Cloudinary) live inside dedicated service classes.
-   - **Frontend**: Components focus strictly on JSX presentation. Browser intent actions are decoupled into `intentExecutor.service.js`. Assistant customization step management, validation, and object URL lifetimes are encapsulated in `useAssistantCustomization.js`. Global user session state is cleanly isolated in `AuthContext.jsx`.
+### 1. shadcn/ui Design System
+* **Pre-Built Primitives**: All UI views are constructed using **shadcn/ui** built with Radix UI headless primitives (`@radix-ui/react-dialog`, `@radix-ui/react-avatar`, `@radix-ui/react-scroll-area`, `@radix-ui/react-separator`, `@radix-ui/react-slot`).
+* **Design Token System**: Deeply integrated into Tailwind CSS v4 using CSS variable tokens (`--background`, `--foreground`, `--card`, `--primary`, `--secondary`, `--border`, `--ring`).
+* **Clean Variant Separation**: Variant styling objects are cleanly separated into dedicated `*Variants.js` modules, preserving React 19 Fast Refresh compliance.
 
-2. **Eliminated Duplicate & Dead Code**:
-   - **Backend**: Removed redundant re-export files (`controllers/user.controllers.js`, `middlewares/isAuth.js`, `middlewares/multer.js`) and dead models (`file.model.js`, `task.model.js`, `note.model.js`, `memory.model.js`).
-   - **Frontend**: Removed redundant duplicate cards (`components/Card.jsx` vs `components/assistant/Card.jsx`) in favor of `AvatarCard.jsx`. Removed `Customize2.jsx` and `UserContext.jsx` aliases.
+### 2. StringTune Animation Engine
+* **Interactive 3D Tilt (`StringTilt`)**: Assistant visualizer portrait, avatar picker cards, and authentication forms tilt fluidly based on pointer location.
+* **Magnetic Micro-Interactions (`StringMagnetic`)**: Control panel toggle, action triggers, and navigation buttons dynamically attract to cursor velocity.
+* **Declarative React Hook**: Managed through [`useStringTune.js`](file:///Users/swagatsouravdhar/WEB%20DEVELOPMENT/Assistant/frontend/src/hooks/useStringTune.js).
 
-3. **Consistent Naming Conventions**:
-   - Backend follows strict file-type suffixes: `*.controller.js`, `*.service.js`, `*.routes.js`, `*.middleware.js`, `*.model.js`, `*.util.js`, `*.validation.js`.
-   - Frontend enforces PascalCase for React components, camelCase with `use` prefix for hooks, and `*.api.js` / `*.service.js` for data & business services.
+### 3. Voice Interaction & Intent Pipeline
+* **Speech Synthesis & Recognition**: Web Speech API wrapper in `useSpeechAssistant.js` for continuous listening, wake-word activation, and vocal responses.
+* **Gemini AI Intent Parser**: Google Gemini AI parses natural language commands and returns structured JSON intents.
+* **Client-Side Intent Execution**: `intentExecutor.service.js` automatically executes real-time actions (opening Google searches, YouTube videos, checking live weather, or launching productivity apps).
 
-4. **Robust Error Handling Everywhere**:
-   - **Backend**: Custom `ApiError` class, centralized error handling middleware capturing MongoDB CastErrors, ValidationErrors, duplicate key constraints (11000), JWT expirations, and Multer file size limits. Incoming requests are pre-validated using lightweight schema validation middleware.
-   - **Frontend**: Centralized Axios response interceptors handle network disconnects, timeouts, and formatted API error messages. A React `ErrorBoundary` prevents application crashes, and reusable `Alert` components give clear feedback for speech recognition, authentication, and form errors.
-
-5. **Decoupled Environment Configurations**:
-   - Backend configurations are centralized in `backend/config/env.js` with CORS origin parsing, development fallback origins, and typed properties.
-   - Frontend configurations live in `frontend/src/config/env.config.js` reading `VITE_API_BASE_URL` with development/production mode indicators.
-   - Both have comprehensive, safe `.env.example` templates.
-
-6. **Scalable API Architecture**:
-   - Root API router mounted at `/api` and `/api/v1` for versioning support.
-   - Uniform response envelopes: `{ statusCode, success, message, data }` for success and `{ statusCode, success: false, message, errors }` for failures across all endpoints.
-   - Full frontend client coverage for `auth`, `assistant`, `conversation`, and `message` resources.
+### 4. Zero-Vulnerability Security Standard
+* **Multi-Tier Sliding-Window Rate Limiting**:
+  * `/api/auth/*`: 10 req / 15 min (credential stuffing protection).
+  * `/api/users/asktoassistant`: 25 req / min (AI credit protection).
+  * General API: 150 req / 15 min (DDoS protection).
+* **NoSQL Injection & XSS Sanitization**: Recursively scrubs payloads, stripping `$` operator keys and dangerous HTML/script tags.
+* **Security Headers**: HSTS, CSP, X-Frame-Options: DENY, X-Content-Type-Options: nosniff.
+* **Strict Upload Filters**: 5MB ceiling, randomized filenames, and MIME/extension validation.
+* **0 Vulnerabilities**: Fully verified with `npm audit` and `pnpm audit`.
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18+ recommended)
+- Node.js (v20+ recommended)
 - pnpm or npm
 - MongoDB Atlas or local MongoDB instance
 
@@ -153,102 +83,86 @@ Assistant/
 
 ### Backend Setup
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+```bash
+cd backend
 
-2. Install dependencies:
-   ```bash
-   pnpm install # or npm install
-   ```
+# Install dependencies
+pnpm install # or npm install
 
-3. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your `MONGODB_URL`, `JWT_SECRET`, `GEMINI_API_URL`, and Cloudinary keys.
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your MONGODB_URL, JWT_SECRET, GEMINI_API_URL, and Cloudinary keys
 
-4. Run tests:
-   ```bash
-   npm test
-   ```
+# Run unit tests (15 tests)
+npm test
 
-5. Run development server:
-   ```bash
-   npm run dev
-   ```
+# Run development server
+npm run dev
+```
 
 ---
 
 ### Frontend Setup
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+```bash
+cd frontend
 
-2. Install dependencies:
-   ```bash
-   pnpm install # or npm install
-   ```
+# Install dependencies
+pnpm install # or npm install
 
-3. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Set `VITE_API_BASE_URL=http://localhost:8000` for local development.
+# Configure environment variables
+cp .env.example .env
+# Set VITE_API_BASE_URL=http://localhost:8000
 
-4. Run linter:
-   ```bash
-   npm run lint
-   ```
+# Run linter
+npm run lint
 
-5. Run development server:
-   ```bash
-   npm run dev
-   ```
+# Run development server
+npm run dev
 
-6. Build for production:
-   ```bash
-   npm run build
-   ```
+# Build for production
+npm run build
+```
 
 ---
 
-## API Documentation Summary
+## Verification Gates (Pre-Push Quality Standard)
 
-### Health Check
-- `GET /api/health` — Check server status and timestamp
+Before any code is committed or merged, all verification pipelines must pass:
 
-### Authentication (`/api/auth`)
-- `POST /api/auth/register` (alias: `/signup`) — Register a new account with validation
-- `POST /api/auth/login` (alias: `/signin`) — Authenticate and receive HTTP-only cookie
-- `POST /api/auth/logout` (or `GET /logout`) — Clear authentication cookie
-- `GET /api/auth/me` — Retrieve active user session
+```bash
+# 1. Backend Unit Tests & Syntax Verification
+cd backend && npm test
 
-### User & Assistant (`/api/users` & `/api/user`)
-- `GET /api/users/current` (or `/me`) — Get current user profile
-- `POST /api/users/update` — Update assistant avatar (file upload or URL) and name
-- `POST /api/users/asktoassistant` (or `/ask`) — Process voice/text command with Gemini AI
+# 2. Frontend Linting & Production Build
+cd ../frontend && npm run lint && npm run build
 
-### Assistants (`/api/assistants`)
-- `GET /api/assistants` — List all assistants owned by user
-- `POST /api/assistants` — Create a custom assistant
-- `GET /api/assistants/:id` — Get assistant details
-- `PUT /api/assistants/:id` — Update assistant
-- `DELETE /api/assistants/:id` — Delete assistant
-- `PATCH /api/assistants/:id/visibility` — Toggle assistant visibility
+# 3. Security Vulnerability Audits
+npm audit --prefix backend
+npm audit --prefix frontend
+```
 
-### Conversations (`/api/conversations`)
-- `GET /api/conversations` — List conversation threads
-- `POST /api/conversations` — Create a conversation thread
-- `GET /api/conversations/:id` — Get conversation details
-- `PUT /api/conversations/:id` — Rename conversation thread
-- `DELETE /api/conversations/:id` — Delete conversation thread and messages
+---
 
-### Messages (`/api/messages`)
-- `POST /api/messages` — Send message in conversation thread
-- `GET /api/messages/:conversationId` — Fetch messages for thread
-- `DELETE /api/messages/:id` — Delete message
-- `PATCH /api/messages/:id/pin` — Toggle pinned message status
+## CI/CD & Deployment Model
+
+This project follows an industry-standard deployment lifecycle:
+* `feature/*` &rarr; Feature development branches.
+* `develop` &rarr; System Integration Testing (SIT).
+* `release/*` &rarr; User Acceptance Testing (UAT).
+* `main` &rarr; Production (tagged and rollback-ready).
+
+Automated GitHub Actions workflows enforce:
+- **CI Pipeline**: Matrix testing across Node 20.x and 22.x, syntax validation, unit tests, and production builds.
+- **CD Deployment Pipeline**: Automated build integrity checks.
+- **Secret Leak Detection**: Gitleaks automated secret scanning.
+- **CodeQL**: Deep semantic code scanning for security vulnerabilities.
+- **Automated Release**: Automatic changelog generation and semantic version tagging.
+
+---
+
+## Codebase Knowledge Graph
+
+An interactive visual knowledge graph of the entire monorepo is available at:
+* [`graphify-out/graph.html`](file:///Users/swagatsouravdhar/WEB%20DEVELOPMENT/Assistant/graphify-out/graph.html) (Open in Chrome/Safari to view 500+ interconnected nodes, god nodes, and 15 clustered communities).
+* [`graphify-out/GRAPH_REPORT.md`](file:///Users/swagatsouravdhar/WEB%20DEVELOPMENT/Assistant/graphify-out/GRAPH_REPORT.md) (Architectural analysis report).

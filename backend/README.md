@@ -1,6 +1,6 @@
 # Virtual Assistant — Backend
 
-Modern, scalable, and fortified Node.js & Express REST API for the Virtual Assistant platform.
+Modern, scalable, and fortified Node.js & Express 5 REST API server for the Virtual Assistant platform.
 
 ---
 
@@ -9,9 +9,9 @@ Modern, scalable, and fortified Node.js & Express REST API for the Virtual Assis
 ```
 backend/
 ├── config/                   # System & third-party client configurations
-│   ├── env.js                # Centralized environment variable parsing & validation
-│   ├── db.js                 # MongoDB connection handler
-│   └── cloudinary.js         # Cloudinary SDK client configuration
+│   ├── env.config.js         # Centralized environment variable parsing & validation
+│   ├── db.config.js          # MongoDB connection handler
+│   └── cloudinary.config.js  # Cloudinary SDK client configuration
 ├── controllers/              # Thin HTTP request & response handlers
 │   ├── auth.controller.js
 │   ├── user.controller.js
@@ -50,14 +50,14 @@ backend/
 │   ├── message.service.js    # Message storage & pinning
 │   └── upload.service.js     # Cloudinary media uploads & temp cleanup
 ├── utils/                    # Core shared utilities
-│   ├── apiResponse.js        # Standardized { success, message, data } response
+│   ├── apiResponse.js        # Standardized { success, message, data } response envelope
 │   ├── apiError.js           # Custom ApiError class with status & stack
 │   ├── asyncHandler.js       # Async error propagation wrapper
 │   └── token.util.js         # JWT signing and verification utility
 ├── validations/              # Request validation schemas
 │   ├── auth.validation.js    # Input checks for signup & signin
 │   └── user.validation.js    # Input checks for voice commands & assistant updates
-├── tests/                    # Automated Node test runner suites
+├── tests/                    # Automated Node.js test runner suites (15 tests)
 │   ├── config-utils.test.js  # Unit tests for env, ApiResponse, ApiError
 │   ├── security.test.js      # Unit tests for security headers, sanitization, rate limiters
 │   ├── token-util.test.js    # Unit tests for JWT signing & verification
@@ -72,49 +72,69 @@ backend/
 ## Zero-Vulnerability Security Architecture
 
 1. **Multi-Tier Rate Limiting (`rateLimiter.middleware.js`)**:
-   - **General API Limiter**: Enforces a 150 request / 15-minute quota across all `/api` and `/api/v1` routes to prevent DDoS and scraping.
-   - **Auth Brute-Force Limiter**: Enforces a strict 10 request / 15-minute quota on `/api/auth/login` and `/api/auth/register` to defeat credential stuffing and dictionary attacks.
+   - **General API Limiter**: Enforces a 150 request / 15-minute quota across all `/api` and `/api/v1` routes to prevent DDoS and abuse.
+   - **Auth Brute-Force Limiter**: Enforces a strict 10 request / 15-minute quota on `/api/auth/login` and `/api/auth/register` to defeat credential stuffing attacks.
    - **AI Quota Limiter**: Limits voice/AI command processing (`/api/users/asktoassistant`) to 25 requests / minute per client to prevent credit burn and Gemini API quota exhaustion.
-   - Automatic background sliding-window cleanup to prevent memory exhaustion.
 
 2. **NoSQL Injection & XSS Sanitization (`sanitize.middleware.js`)**:
    - Recursively scrubs incoming `req.body`, `req.query`, and `req.params`.
-   - Strips dangerous MongoDB operator keys starting with `$` (e.g. `$gt`, `$ne`, `$where`) or containing dot-notation traversal.
+   - Strips dangerous MongoDB operator keys starting with `$` (e.g. `$gt`, `$ne`, `$where`) or containing dot notation.
    - Neutralizes malicious HTML/script tags and inline event handlers (`<script>`, `onerror=`, `onload=`, `javascript:`).
 
 3. **HTTP Security Headers (`security.middleware.js`)**:
-   - `X-Content-Type-Options: nosniff` (prevents MIME type confusion attacks).
+   - `X-Content-Type-Options: nosniff` (prevents MIME confusion attacks).
    - `X-Frame-Options: DENY` (clickjacking defense).
    - `X-XSS-Protection: 1; mode=block`.
-   - `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` (enforces HTTPS in production).
+   - `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` (enforces HTTPS).
    - `Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; object-src 'none'`.
-   - `Referrer-Policy: strict-origin-when-cross-origin`.
-   - `Permissions-Policy: camera=(), geolocation=(), microphone=(self)`.
    - Disables `X-Powered-By: Express` fingerprinting.
 
 4. **Upload Security Hardening (`multer.middleware.js`)**:
    - Verifies both MIME type and file extension against a strict allowlist (`.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`).
-   - Rejects executable files, double extensions, and SVGs containing potential script vectors.
-   - Enforces a 5MB payload limit and randomized unique filename sanitization.
+   - Rejects executable files, double extensions, and dangerous SVG vectors.
+   - Enforces a 5MB payload ceiling and randomized unique filename sanitization.
 
 5. **Cookie Security**:
-   - Flags cookies as `httpOnly: true` (inaccessible to JavaScript).
-   - Dynamically enforces `secure: true` and `sameSite: "none"` in production (or `"lax"` in development).
+   - Authentication tokens transmitted in `httpOnly`, `sameSite: "strict"`, and `secure` (in production) cookies.
 
 ---
 
-## Running Backend
+## API Endpoints Summary
+
+### Authentication (`/api/auth`)
+* `POST /api/auth/register` — Create account with validated payload
+* `POST /api/auth/login` — Sign in and issue secure HTTP-only cookie
+* `POST /api/auth/logout` — Revoke and clear session cookie
+* `GET  /api/auth/me` — Retrieve authenticated user profile
+
+### User & Voice Assistant (`/api/users`)
+* `GET  /api/users/current` — Current user profile and active assistant
+* `POST /api/users/update` — Update assistant name and upload custom avatar to Cloudinary
+* `POST /api/users/asktoassistant` — Send speech command to Google Gemini AI
+
+### Assistants Domain (`/api/assistants`)
+* `GET    /api/assistants` — List user assistants
+* `POST   /api/assistants` — Create a new assistant
+* `GET    /api/assistants/:id` — Get assistant details
+* `PUT    /api/assistants/:id` — Update assistant properties
+* `DELETE /api/assistants/:id` — Delete assistant
+* `PATCH  /api/assistants/:id/visibility` — Toggle assistant public/private visibility
+
+---
+
+## Getting Started
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 pnpm install # or npm install
 
-# Run in development mode with auto-reload
-npm run dev
+# 2. Configure environment
+cp .env.example .env
+# Fill in your MONGODB_URL, JWT_SECRET, GEMINI_API_URL, and Cloudinary keys
 
-# Run automated test suite (15 unit tests)
+# 3. Run automated tests (15 unit tests)
 npm test
 
-# Run in production mode
-npm start
+# 4. Start development server
+npm run dev
 ```
