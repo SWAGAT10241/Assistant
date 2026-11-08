@@ -1,72 +1,73 @@
-import React from "react";
-import {
-  FiAlertCircle,
-  FiCheckCircle,
-  FiInfo,
-  FiAlertTriangle,
-  FiX,
-} from "react-icons/fi";
+import * as React from "react";
+import { AlertCircle, CheckCircle2, Info, AlertTriangle, X } from "lucide-react";
+import { Alert as ShadcnAlert, AlertDescription } from "../ui/alert";
+import { cn } from "../../lib/utils";
 
-const VARIANT_MAP = {
+const VARIANT_CONFIG = {
   error: {
-    container: "bg-red-500/15 border-red-500/30 text-red-200",
-    icon: FiAlertCircle,
-    iconColor: "text-red-400",
+    shadcnVariant: "destructive",
+    icon: AlertCircle,
   },
   warning: {
-    container: "bg-amber-500/15 border-amber-500/30 text-amber-200",
-    icon: FiAlertTriangle,
-    iconColor: "text-amber-400",
+    shadcnVariant: "warning",
+    icon: AlertTriangle,
   },
   success: {
-    container: "bg-emerald-500/15 border-emerald-500/30 text-emerald-200",
-    icon: FiCheckCircle,
-    iconColor: "text-emerald-400",
+    shadcnVariant: "success",
+    icon: CheckCircle2,
   },
   info: {
-    container: "bg-blue-500/15 border-blue-500/30 text-blue-200",
-    icon: FiInfo,
-    iconColor: "text-blue-400",
+    shadcnVariant: "info",
+    icon: Info,
+  },
+  destructive: {
+    shadcnVariant: "destructive",
+    icon: AlertCircle,
+  },
+  default: {
+    shadcnVariant: "default",
+    icon: Info,
   },
 };
 
 /**
- * Reusable Alert banner component
+ * Common Alert banner component powered by shadcn/ui.
  */
-export function Alert({
-  variant = "error",
-  children,
-  onDismiss,
-  className = "",
-}) {
-  const currentVariant = VARIANT_MAP[variant] || VARIANT_MAP.error;
-  const Icon = currentVariant.icon;
+export const Alert = React.forwardRef(
+  ({ variant = "error", children, onDismiss, className = "", ...rest }, ref) => {
+    const config = VARIANT_CONFIG[variant] || VARIANT_CONFIG.error;
+    const Icon = config.icon;
 
-  if (!children) return null;
+    if (!children) return null;
 
-  return (
-    <div
-      role="alert"
-      className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border text-sm backdrop-blur-md transition-all duration-200 ${currentVariant.container} ${className}`}
-    >
-      <div className="flex items-center gap-2.5 flex-1">
-        <Icon className={`w-5 h-5 shrink-0 ${currentVariant.iconColor}`} />
-        <span className="leading-snug">{children}</span>
-      </div>
+    return (
+      <ShadcnAlert
+        ref={ref}
+        variant={config.shadcnVariant}
+        className={cn("flex items-center justify-between gap-3 pr-2", className)}
+        {...rest}
+      >
+        <div className="flex items-center gap-3 flex-1">
+          <Icon className="h-5 w-5 shrink-0" />
+          <AlertDescription className="text-sm font-medium leading-normal">
+            {children}
+          </AlertDescription>
+        </div>
 
-      {onDismiss && (
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="text-white/60 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0"
-          aria-label="Dismiss alert"
-        >
-          <FiX className="w-4 h-4" />
-        </button>
-      )}
-    </div>
-  );
-}
+        {onDismiss && (
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="p-1 rounded-full opacity-70 hover:opacity-100 hover:bg-background/40 transition-colors shrink-0"
+            aria-label="Dismiss alert"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </ShadcnAlert>
+    );
+  }
+);
 
+Alert.displayName = "Alert";
 export default Alert;
-

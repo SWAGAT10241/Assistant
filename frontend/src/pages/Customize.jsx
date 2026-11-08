@@ -1,13 +1,15 @@
 import React, { useRef } from "react";
-import { RiImageAddFill } from "react-icons/ri";
-import { MdKeyboardBackspace } from "react-icons/md";
+import { ArrowLeft, ImagePlus, Sparkles, Check } from "lucide-react";
 import { StringTilt, StringMagnetic, StringSpotlight } from "@fiddle-digital/string-tune";
 import AvatarCard from "../components/assistant/AvatarCard";
-import Button from "../components/common/Button";
-import Input from "../components/common/Input";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 import Alert from "../components/common/Alert";
 import useAssistantCustomization from "../hooks/useAssistantCustomization";
 import useStringTune from "../hooks/useStringTune";
+import { cn } from "../lib/utils";
 
 import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
@@ -28,7 +30,7 @@ const PRESET_IMAGES = [
 ];
 
 /**
- * Assistant Customization View
+ * Assistant Customization View powered by shadcn/ui.
  * Step 1: Select Preset Avatar or Upload Custom Image
  * Step 2: Name Assistant
  */
@@ -65,39 +67,43 @@ export function Customize() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-t from-black via-gray-950 to-[#030353] flex flex-col justify-center items-center p-6 relative">
-      {/* Back button */}
-      <button
+    <div className="w-full min-h-screen bg-gradient-to-t from-background via-gray-950 to-[#030353] flex flex-col justify-center items-center p-6 relative select-none">
+      {/* Back button using shadcn Button */}
+      <Button
+        variant="ghost"
+        size="icon"
         string="magnetic"
         string-magnetic-strength="0.3"
         onClick={goBack}
-        className="absolute top-6 left-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+        className="absolute top-6 left-6 rounded-full text-muted-foreground hover:text-foreground h-11 w-11"
         aria-label="Go back"
       >
-        <MdKeyboardBackspace className="w-7 h-7" />
-      </button>
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
 
-      {/* Step Indicator */}
-      <div className="flex items-center gap-2 mb-4">
-        <span
-          className={`h-2 rounded-full transition-all duration-300 ${
-            step === 1 ? "w-8 bg-blue-500" : "w-2 bg-white/20"
-          }`}
-        />
-        <span
-          className={`h-2 rounded-full transition-all duration-300 ${
-            step === 2 ? "w-8 bg-blue-500" : "w-2 bg-white/20"
-          }`}
-        />
+      {/* Step Indicator using shadcn Badges */}
+      <div className="flex items-center gap-3 mb-6">
+        <Badge
+          variant={step === 1 ? "default" : "outline"}
+          className="px-3 py-1 gap-1.5 transition-all"
+        >
+          {step > 1 ? <Check className="w-3.5 h-3.5" /> : <span>1</span>}
+          <span>Avatar</span>
+        </Badge>
+        <div className="w-6 h-px bg-border/60" />
+        <Badge
+          variant={step === 2 ? "default" : "outline"}
+          className="px-3 py-1 gap-1.5 transition-all"
+        >
+          <span>2</span>
+          <span>Wake Word</span>
+        </Badge>
       </div>
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="w-full max-w-md mb-6">
-          <Alert
-            variant="error"
-            onDismiss={() => setErrorMessage("")}
-          >
+        <div className="w-full max-w-md mb-6 animate-in fade-in-50 duration-200">
+          <Alert variant="error" onDismiss={() => setErrorMessage("")}>
             {errorMessage}
           </Alert>
         </div>
@@ -105,10 +111,15 @@ export function Customize() {
 
       {/* STEP 1: Select Image */}
       {step === 1 && (
-        <div className="flex flex-col items-center max-w-4xl w-full animate-fadeIn">
-          <h1 className="text-white text-2xl sm:text-3xl font-bold text-center mb-8">
-            Select your <span className="text-blue-400">Assistant Image</span>
-          </h1>
+        <div className="flex flex-col items-center max-w-4xl w-full animate-in fade-in duration-300">
+          <div className="text-center mb-8 space-y-2">
+            <h1 className="text-foreground text-3xl sm:text-4xl font-extrabold tracking-tight">
+              Select your <span className="text-primary">Assistant Image</span>
+            </h1>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+              Choose a visual identity for your personal AI assistant or upload your own portrait.
+            </p>
+          </div>
 
           <div className="flex justify-center items-center flex-wrap gap-4 max-w-3xl">
             {PRESET_IMAGES.map((img, index) => (
@@ -121,8 +132,8 @@ export function Customize() {
               />
             ))}
 
-            {/* Custom Image Upload Card */}
-            <div
+            {/* Custom Image Upload Card using shadcn Card styling */}
+            <Card
               tabIndex={0}
               role="button"
               string="tilt"
@@ -134,11 +145,12 @@ export function Customize() {
                   fileInputRef.current?.click();
                 }
               }}
-              className={`w-[70px] h-[140px] lg:w-[150px] lg:h-[250px] bg-[#020220] rounded-2xl overflow-hidden cursor-pointer flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 select-none focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+              className={cn(
+                "w-[75px] h-[145px] lg:w-[150px] lg:h-[250px] overflow-hidden cursor-pointer flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 select-none p-0 border-2",
                 customFile
-                  ? "border-4 border-white shadow-2xl shadow-blue-500/50 scale-105"
-                  : "border-2 border-dashed border-blue-900/60 hover:border-white/80"
-              }`}
+                  ? "border-primary shadow-xl shadow-primary/30 ring-2 ring-primary scale-105 bg-primary/10"
+                  : "border-dashed border-border/70 hover:border-primary/80 bg-card/40"
+              )}
             >
               {customFile && previewUrl ? (
                 <img
@@ -147,12 +159,12 @@ export function Customize() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center gap-2 p-2 text-center text-gray-300">
-                  <RiImageAddFill className="w-8 h-8 text-blue-400" />
-                  <span className="text-xs hidden lg:block">Upload Custom</span>
+                <div className="flex flex-col items-center gap-2 p-2 text-center text-muted-foreground group-hover:text-foreground">
+                  <ImagePlus className="w-8 h-8 text-primary" />
+                  <span className="text-xs font-medium hidden lg:block">Upload Custom</span>
                 </div>
               )}
-            </div>
+            </Card>
 
             <input
               type="file"
@@ -166,11 +178,11 @@ export function Customize() {
           <Button
             string="magnetic"
             string-magnetic-strength="0.3"
-            variant="primary"
+            variant="default"
             size="lg"
             disabled={!selectedPreset && !customFile}
             onClick={goToNextStep}
-            className="mt-10"
+            className="mt-10 px-10 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20"
           >
             Next: Name Assistant
           </Button>
@@ -179,42 +191,47 @@ export function Customize() {
 
       {/* STEP 2: Name Assistant */}
       {step === 2 && (
-        <div className="flex flex-col items-center max-w-md w-full animate-fadeIn text-center">
-          {/* Avatar Preview */}
-          {activeImage && (
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-400 shadow-xl shadow-blue-950 mb-6">
-              <img
-                src={activeImage}
-                alt="Selected Avatar Preview"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+        <Card className="max-w-md w-full animate-in fade-in zoom-in-95 duration-300 border-border/80 bg-card/85 backdrop-blur-2xl text-center shadow-2xl">
+          <CardHeader className="flex flex-col items-center pb-4">
+            {/* Avatar Preview */}
+            {activeImage && (
+              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary shadow-xl shadow-primary/25 mb-4 ring-4 ring-primary/20">
+                <img
+                  src={activeImage}
+                  alt="Selected Avatar Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
 
-          <h1 className="text-white text-2xl sm:text-3xl font-bold mb-2">
-            Name your <span className="text-blue-400">Assistant</span>
-          </h1>
-          <p className="text-gray-400 text-sm mb-6">
-            You'll use this name as the wake word when speaking commands.
-          </p>
+            <CardTitle className="text-2xl font-bold">
+              Name your <span className="text-primary">Assistant</span>
+            </CardTitle>
+            <CardDescription className="text-xs text-muted-foreground mt-1">
+              You'll use this name as the wake word when speaking commands.
+            </CardDescription>
+          </CardHeader>
 
-          <Input
-            type="text"
-            placeholder="e.g. Jarvis, Siri, Friday"
-            value={assistantName}
-            onChange={(e) => setAssistantName(e.target.value)}
-            required
-            className="mb-6"
-          />
+          <CardContent className="space-y-4">
+            <Input
+              type="text"
+              placeholder="e.g. Jarvis, Siri, Friday"
+              value={assistantName}
+              onChange={(e) => setAssistantName(e.target.value)}
+              required
+              className="text-center font-medium h-12 text-base"
+              autoFocus
+            />
+          </CardContent>
 
-          <div className="flex items-center gap-4 w-full">
+          <CardFooter className="flex items-center gap-3 pt-2">
             <Button
               string="magnetic"
               string-magnetic-strength="0.3"
               variant="outline"
               size="lg"
               onClick={() => setStep(1)}
-              className="w-1/2"
+              className="w-1/2 rounded-xl"
             >
               Back
             </Button>
@@ -222,16 +239,18 @@ export function Customize() {
             <Button
               string="magnetic"
               string-magnetic-strength="0.3"
-              variant="primary"
+              variant="default"
               size="lg"
               loading={loading}
               onClick={saveAssistant}
-              className="w-1/2"
+              disabled={!assistantName.trim()}
+              className="w-1/2 rounded-xl font-semibold shadow-lg shadow-primary/20 gap-2"
             >
+              <Sparkles className="w-4 h-4" />
               Finish Setup
             </Button>
-          </div>
-        </div>
+          </CardFooter>
+        </Card>
       )}
     </div>
   );

@@ -1,7 +1,19 @@
 import React from "react";
-import { RxCross1 } from "react-icons/rx";
-import { FiLogOut, FiSettings, FiClock } from "react-icons/fi";
-import Button from "../common/Button";
+import { Settings, LogOut, Clock, X } from "lucide-react";
+import {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
+import { Card } from "../ui/card";
 
 export function HistoryDrawer({
   isOpen,
@@ -12,92 +24,101 @@ export function HistoryDrawer({
   onLogout,
 }) {
   return (
-    <>
-      {/* Background Overlay */}
-      <div
-        onClick={onClose}
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      />
-
-      {/* Slide-out Drawer Panel */}
-      <aside
-        className={`fixed top-0 right-0 h-full w-full sm:w-[380px] bg-gray-950/90 backdrop-blur-xl border-l border-white/10 p-6 flex flex-col gap-6 z-50 transition-transform duration-300 shadow-2xl ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex items-center justify-between pb-3 border-b border-white/10">
-          <div>
-            <h2 className="text-white text-lg font-bold">Control Panel</h2>
-            <p className="text-gray-400 text-xs">Logged in as {userName || "User"}</p>
-          </div>
-          <button
-            string="magnetic"
-            string-magnetic-strength="0.3"
-            onClick={onClose}
-            className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Close menu"
-          >
-            <RxCross1 className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex flex-col gap-3">
-          <Button
-            variant="glass"
-            size="md"
-            icon={FiSettings}
-            onClick={() => {
-              onClose();
-              onCustomize();
-            }}
-            className="w-full justify-start text-left"
-          >
-            Customize Assistant
-          </Button>
-
-          <Button
-            variant="danger"
-            size="md"
-            icon={FiLogOut}
-            onClick={onLogout}
-            className="w-full justify-start text-left"
-          >
-            Log Out
-          </Button>
-        </div>
-
-        {/* History Header */}
-        <div className="flex items-center gap-2 pt-2 border-t border-white/10">
-          <FiClock className="text-blue-400 w-4 h-4" />
-          <h3 className="text-white font-semibold text-sm">Voice Command History</h3>
-          <span className="ml-auto text-xs text-gray-400 bg-white/10 px-2 py-0.5 rounded-full">
-            {history?.length || 0}
-          </span>
-        </div>
-
-        {/* History List */}
-        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5">
-          {history && history.length > 0 ? (
-            history.map((command, idx) => (
-              <div
-                key={idx}
-                className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-3 text-sm text-gray-200 transition-colors"
-              >
-                <p className="line-clamp-2">"{command}"</p>
-              </div>
-            ))
-          ) : (
-            <div className="h-40 flex flex-col items-center justify-center text-center text-gray-400 text-xs">
-              <p>No recent voice commands.</p>
-              <p className="mt-1 text-gray-400">Say your assistant's name to begin!</p>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogPortal>
+        <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
+        <DialogContent
+          className="fixed top-0 right-0 left-auto translate-x-0 translate-y-0 h-full w-full sm:w-[400px] bg-background/95 backdrop-blur-2xl border-l border-border/70 p-6 flex flex-col gap-5 z-50 rounded-none sm:rounded-l-3xl shadow-2xl animate-in slide-in-from-right duration-300"
+        >
+          <DialogHeader className="flex flex-row items-center justify-between pb-2 text-left space-y-0">
+            <div>
+              <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
+                Control Panel
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Logged in as <span className="font-semibold text-foreground">{userName || "User"}</span>
+              </DialogDescription>
             </div>
-          )}
-        </div>
-      </aside>
-    </>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+              aria-label="Close menu"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
+
+          <Separator />
+
+          {/* Quick Actions */}
+          <div className="flex flex-col gap-2.5">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                onClose();
+                onCustomize();
+              }}
+              className="w-full justify-start gap-3 h-12 rounded-xl text-foreground font-medium"
+            >
+              <Settings className="w-4 h-4 text-primary" />
+              Customize Assistant
+            </Button>
+
+            <Button
+              variant="destructive"
+              size="lg"
+              onClick={onLogout}
+              className="w-full justify-start gap-3 h-12 rounded-xl font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              Log Out
+            </Button>
+          </div>
+
+          <Separator />
+
+          {/* History Header */}
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-2">
+              <Clock className="text-primary w-4 h-4" />
+              <h3 className="text-foreground font-semibold text-sm">
+                Voice Command History
+              </h3>
+            </div>
+            <Badge variant="secondary" className="px-2.5 py-0.5 text-xs font-mono">
+              {history?.length || 0}
+            </Badge>
+          </div>
+
+          {/* History List with ScrollArea */}
+          <ScrollArea className="flex-1 pr-3 -mr-3">
+            <div className="flex flex-col gap-2.5 pb-4">
+              {history && history.length > 0 ? (
+                history.map((command, idx) => (
+                  <Card
+                    key={idx}
+                    className="p-3.5 bg-card/60 hover:bg-card/90 border-border/50 text-sm transition-colors rounded-xl"
+                  >
+                    <p className="text-foreground/90 leading-relaxed text-xs">
+                      "{command}"
+                    </p>
+                  </Card>
+                ))
+              ) : (
+                <div className="h-48 flex flex-col items-center justify-center text-center text-muted-foreground text-xs gap-1">
+                  <Clock className="w-8 h-8 opacity-30 mb-2" />
+                  <p className="font-medium text-foreground/70">No recent voice commands.</p>
+                  <p>Say your assistant's name to begin!</p>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </DialogPortal>
+    </Dialog>
   );
 }
 

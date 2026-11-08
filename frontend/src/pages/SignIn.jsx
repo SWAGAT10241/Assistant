@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { LogIn, Sparkles } from "lucide-react";
 import { StringTilt, StringMagnetic } from "@fiddle-digital/string-tune";
 import bg from "../assets/authBg.png";
 import useAuth from "../hooks/useAuth";
 import useStringTune from "../hooks/useStringTune";
 import Input from "../components/common/Input";
-import Button from "../components/common/Button";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "../components/ui/card";
 import Alert from "../components/common/Alert";
 
 export function SignIn() {
@@ -47,73 +56,84 @@ export function SignIn() {
       className="w-full min-h-screen bg-cover bg-center flex justify-center items-center p-4 relative"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
-      <form
+      <Card
         string="tilt"
         string-tilt-max="5"
-        className="w-full max-w-md bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl flex flex-col items-center gap-5 p-8 sm:p-10 z-10"
-        onSubmit={handleSignIn}
+        className="w-full max-w-md bg-card/85 backdrop-blur-2xl border-border/80 shadow-2xl rounded-3xl z-10"
       >
-        <div className="text-center mb-2">
-          <h1 className="text-white text-3xl font-extrabold tracking-tight">
-            Sign In to <span className="text-blue-400">Virtual Assistant</span>
-          </h1>
-          <p className="text-gray-300 text-sm mt-1">
-            Welcome back! Please enter your details.
-          </p>
-        </div>
+        <form onSubmit={handleSignIn}>
+          <CardHeader className="text-center pb-4 space-y-1.5">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mx-auto mb-2 border border-primary/20 shadow-md">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <CardTitle className="text-3xl font-extrabold tracking-tight">
+              Sign In to <span className="text-primary">Virtual Assistant</span>
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Welcome back! Please enter your details to continue.
+            </CardDescription>
+          </CardHeader>
 
-        {errorMessage && (
-          <Alert
-            variant="error"
-            onDismiss={() => setErrorMessage("")}
-            className="w-full"
-          >
-            {errorMessage}
-          </Alert>
-        )}
+          <CardContent className="space-y-4">
+            {errorMessage && (
+              <Alert
+                variant="error"
+                onDismiss={() => setErrorMessage("")}
+                className="w-full"
+              >
+                {errorMessage}
+              </Alert>
+            )}
 
-        <Input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-        />
+            <Input
+              label="Email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
 
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="current-password"
-        />
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </CardContent>
 
-        <Button
-          type="submit"
-          string="magnetic"
-          string-magnetic-strength="0.3"
-          variant="primary"
-          size="lg"
-          loading={loading}
-          className="w-full mt-2"
-        >
-          Sign In
-        </Button>
+          <CardFooter className="flex flex-col gap-4 pt-2">
+            <Button
+              type="submit"
+              string="magnetic"
+              string-magnetic-strength="0.3"
+              variant="default"
+              size="lg"
+              disabled={loading}
+              className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
 
-        <p className="text-gray-300 text-sm text-center mt-2">
-          Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-4 transition-colors"
-          >
-            Sign Up
-          </Link>
-        </p>
-      </form>
+            <p className="text-muted-foreground text-sm text-center">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-primary hover:text-primary/80 font-semibold underline underline-offset-4 transition-colors"
+              >
+                Sign Up
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 }

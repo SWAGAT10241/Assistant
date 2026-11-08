@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CgMenuRight } from "react-icons/cg";
+import { Menu } from "lucide-react";
 import { StringTilt, StringMagnetic, StringSpotlight } from "@fiddle-digital/string-tune";
 import useAuth from "../hooks/useAuth";
 import useSpeechAssistant from "../hooks/useSpeechAssistant";
@@ -8,6 +8,7 @@ import useStringTune from "../hooks/useStringTune";
 import VoiceVisualizer from "../components/assistant/VoiceVisualizer";
 import HistoryDrawer from "../components/assistant/HistoryDrawer";
 import Alert from "../components/common/Alert";
+import { Button } from "../components/ui/button";
 
 export function Home() {
   const { user, logout, updateUser } = useAuth();
@@ -47,16 +48,18 @@ export function Home() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-t from-black via-gray-950 to-[#02023d] flex flex-col justify-center items-center px-4 py-8 overflow-hidden relative select-none">
-      {/* Header Menu Button */}
-      <button
+      {/* Header Menu Button powered by shadcn Button */}
+      <Button
+        variant="outline"
+        size="icon"
         string="magnetic"
         string-magnetic-strength="0.3"
         onClick={() => setDrawerOpen(true)}
-        className="absolute top-6 right-6 text-white/80 hover:text-white p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-colors z-30 cursor-pointer shadow-lg"
+        className="absolute top-6 right-6 h-11 w-11 rounded-2xl bg-card/60 backdrop-blur-xl border-border/80 text-foreground hover:bg-card/90 transition-colors z-30 cursor-pointer shadow-xl"
         aria-label="Open control panel"
       >
-        <CgMenuRight className="w-6 h-6" />
-      </button>
+        <Menu className="w-5 h-5" />
+      </Button>
 
       {/* Browser Speech API Warning if unsupported */}
       {!isSupported && (
