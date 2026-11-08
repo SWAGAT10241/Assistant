@@ -1,5 +1,6 @@
 import React from "react";
-import { Settings, LogOut, Clock, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Settings, LogOut, Clock, X, Compass } from "lucide-react";
 import {
   Dialog,
   DialogPortal,
@@ -24,6 +25,7 @@ export function HistoryDrawer({
   onCustomize,
   onLogout,
 }) {
+  const navigate = useNavigate();
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogPortal>
@@ -58,6 +60,19 @@ export function HistoryDrawer({
 
           {/* Quick Actions */}
           <div className="flex flex-col gap-2.5">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                onClose();
+                navigate("/landing");
+              }}
+              className="w-full justify-start gap-3 h-12 rounded-xl text-foreground font-medium"
+            >
+              <Compass className="w-4 h-4 text-primary" />
+              Product Overview & Features
+            </Button>
+
             <Button
               variant="outline"
               size="lg"

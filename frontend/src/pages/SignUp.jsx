@@ -154,6 +154,13 @@ export function SignUp() {
                 Sign In
               </Link>
             </p>
+
+            <Link
+              to="/landing"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Back to Overview
+            </Link>
           </CardFooter>
         </form>
       </Card>
