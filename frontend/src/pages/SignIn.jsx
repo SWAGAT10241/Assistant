@@ -16,6 +16,7 @@ import {
   CardFooter,
 } from "../components/ui/card";
 import Alert from "../components/common/Alert";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 export function SignIn() {
   const { login } = useAuth();
@@ -56,7 +57,10 @@ export function SignIn() {
       className="w-full min-h-screen bg-cover bg-center flex justify-center items-center p-4 relative"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-colors duration-500" />
+
+      {/* Top right Theme Toggle */}
+      <ThemeToggle className="absolute top-6 right-6 z-20" />
 
       <Card
         string="tilt"

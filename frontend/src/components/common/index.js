@@ -3,4 +3,4 @@ export { default as Input } from "./Input";
 export { default as Spinner } from "./Spinner";
 export { default as Alert } from "./Alert";
 export { default as ErrorBoundary } from "./ErrorBoundary";
-
+export { default as ThemeToggle } from "./ThemeToggle";

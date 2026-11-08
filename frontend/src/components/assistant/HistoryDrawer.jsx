@@ -14,6 +14,7 @@ import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
+import ThemeToggle from "../common/ThemeToggle";
 
 export function HistoryDrawer({
   isOpen,
@@ -39,15 +40,18 @@ export function HistoryDrawer({
                 Logged in as <span className="font-semibold text-foreground">{userName || "User"}</span>
               </DialogDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
-              aria-label="Close menu"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <ThemeToggle className="h-8 w-8 rounded-full" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+                aria-label="Close menu"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </DialogHeader>
 
           <Separator />

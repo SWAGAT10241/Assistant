@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import Alert from "../components/common/Alert";
+import ThemeToggle from "../components/common/ThemeToggle";
 import useAssistantCustomization from "../hooks/useAssistantCustomization";
 import useStringTune from "../hooks/useStringTune";
 import { cn } from "../lib/utils";
@@ -67,7 +68,7 @@ export function Customize() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-t from-background via-gray-950 to-[#030353] flex flex-col justify-center items-center p-6 relative select-none">
+    <div className="w-full min-h-screen bg-gradient-to-t from-background via-background/95 to-primary/10 dark:from-black dark:via-gray-950 dark:to-[#030353] flex flex-col justify-center items-center p-6 relative select-none transition-colors duration-500">
       {/* Back button using shadcn Button */}
       <Button
         variant="ghost"
@@ -80,6 +81,9 @@ export function Customize() {
       >
         <ArrowLeft className="w-6 h-6" />
       </Button>
+
+      {/* Theme Toggle */}
+      <ThemeToggle className="absolute top-6 right-6" />
 
       {/* Step Indicator using shadcn Badges */}
       <div className="flex items-center gap-3 mb-6">
