@@ -24,18 +24,18 @@
   },
   "dependencies": {
     "@google/genai": "^2.32.0",
-    "axios": "^1.21.0",
+    "axios": "^1.21.1",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
-    "cookie": "^2.0.1",
+    "cookie": "^2.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^18.0.9",
+    "dotenv": "^18.0.10",
     "express": "^5.2.1",
-    "google-auth-library": "^11.3.3",
+    "google-auth-library": "^11.3.4",
     "jsonwebtoken": "^9.0.3",
     "moment": "^2.31.0",
-    "mongoose": "^9.11.4",
+    "mongoose": "^9.12.1",
     "multer": "^2.5.0"
   },
   "overrides": {
